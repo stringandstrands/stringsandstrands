@@ -78,11 +78,13 @@ create table if not exists public.orders (
 
 -- ─── 6. Order Items ──────────────────────────────────────────
 create table if not exists public.order_items (
-  id                  uuid primary key default uuid_generate_v4(),
-  order_id            uuid not null references public.orders(id) on delete cascade,
-  product_id          text not null references public.products(id),
-  quantity            integer not null,
-  price_at_purchase   integer not null          -- in paise
+  id                      uuid primary key default uuid_generate_v4(),
+  order_id                uuid not null references public.orders(id) on delete cascade,
+  product_id              text references public.products(id) on delete set null,  -- nullable: product may be deleted later
+  quantity                integer not null,
+  price_at_purchase       integer not null,          -- in paise
+  product_name_snapshot   text,                      -- captured at order time so deleted products don't break history
+  price_inr_snapshot      integer                    -- price in rupees at order time
 );
 
 -- ─── 7. Reviews ──────────────────────────────────────────────

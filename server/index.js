@@ -559,11 +559,14 @@ app.post('/api/payment/verify', async (req, res) => {
 
     if (orderError || !sbOrder) throw new Error(`Order creation failed: ${orderError?.message}`);
 
+    // Build order items — snapshot name & price so deleted products don't break history
     const orderItemsData = cartItems.map(item => ({
       order_id: sbOrder.id,
-      product_id: item.productId || item.id,
+      product_id: item.productId || item.id || null,   // null-safe: product may have been deleted
       quantity: item.quantity,
       price_at_purchase: Math.round(item.price * 100),
+      product_name_snapshot: item.name || null,
+      price_inr_snapshot: Math.round(item.price),
     }));
 
     const { error: itemsError } = await supabase.from('order_items').insert(orderItemsData);
