@@ -25,6 +25,7 @@ export interface ProductData {
   images: string[];
   reviews: Review[];
   rating?: number;
+  description?: string;
 }
 
 const TRUST_BADGES = [
@@ -60,6 +61,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
           images: data.images || [],
           reviews: [],
           rating: data.rating,
+          description: data.description,
         });
 
         // Find variants by base name
@@ -101,6 +103,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
     originalPrice: 0,
     images: [],
     reviews: [],
+    description: '',
   };
 
   const savePercent = displayProduct.originalPrice > 0
@@ -115,8 +118,8 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
   };
 
   const FAQS = [
-    { q: "How should I store this piece so it lasts long?", a: "Store it in a cool, dry place, preferably in the provided pouch or a soft-lined jewelry box." },
-    { q: "How can I contact customer service?", a: "You can reach us via the Contact Us page or email support@stringsandstrands.com." },
+    { q: "How should I store this piece so it lasts long?", a: "Store it in a cool, dry place, preferably in a pouch or soft-lined jewelry box." },
+    { q: "How can I contact customer service?", a: "You can reach us via the Contact Us page or email stringsandstrands26@gmail.com" },
     { q: "How should I take care of this jewellery?", a: "Avoid direct contact with perfumes, lotions, and water. Wipe with a soft cloth after use." }
   ];
 
@@ -212,6 +215,13 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
             <p className="text-xs text-gray-400 mb-6">
               Tax included. <span className="underline cursor-pointer hover:text-gray-600">Shipping calculated</span> at checkout.
             </p>
+
+            {/* Description */}
+            {displayProduct.description && (
+              <div className="text-sm text-gray-600 mb-6 leading-relaxed whitespace-pre-line">
+                {displayProduct.description}
+              </div>
+            )}
 
             {/* Color Variants */}
             {variants.length > 1 && (

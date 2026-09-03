@@ -11,7 +11,7 @@ const ELIGIBLE = [
 const NOT_ELIGIBLE = [
   'Change of mind or personal preference',
   'Colour variation due to screen differences',
-  'Size or fit issues (please check descriptions carefully)',
+  'Size or fit issues',
   'Items used, worn, or tampered with',
   'Claims raised after 48 hours of delivery',
   'No unboxing video provided as proof',
