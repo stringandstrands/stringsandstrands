@@ -36,7 +36,7 @@ const STEPS = [
   {
     num: '04',
     title: 'Resolution',
-    desc: 'On approval, we'll arrange a pickup of the defective item and dispatch a replacement or process a refund within 5–7 business days.',
+    desc: "On approval, we'll arrange a pickup of the defective item and dispatch a replacement or process a refund within 5–7 business days.",
   },
 ];
 
