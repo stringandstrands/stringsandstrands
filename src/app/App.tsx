@@ -18,6 +18,7 @@ import PrivacyPolicyPage from './PrivacyPolicyPage';
 import TermsPage from './TermsPage';
 import CartDrawer from './components/CartDrawer';
 import AuthModal from './components/AuthModal';
+import InstagramReelWidget from './components/InstagramReelWidget';
 import AdminApp from './admin/AdminApp';
 import { AuthProvider, useAuth } from '../lib/AuthContext';
 import { CartProvider, useCart } from '../lib/CartContext';
@@ -82,6 +83,7 @@ function AppContent() {
       </div>
       <Footer />
       <CartDrawer />
+      <InstagramReelWidget />
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
