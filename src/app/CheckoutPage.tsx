@@ -15,8 +15,6 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  const [loading, setLoading] = useState(false);
-  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
   const [shipping, setShipping] = useState({
     email: user?.email || '',
     full_name: user?.user_metadata?.name || '',
