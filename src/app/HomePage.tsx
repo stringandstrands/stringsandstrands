@@ -43,15 +43,15 @@ function HeroCarousel() {
 
   useEffect(() => {
     if (!emblaApi) return;
-    
+
     const onSelect = () => {
       setSelectedIndex(emblaApi.selectedScrollSnap());
     };
-    
+
     emblaApi.on("select", onSelect);
     emblaApi.on("pointerDown", () => setIsDragging(true));
     emblaApi.on("pointerUp", () => setIsDragging(false));
-    
+
     return () => {
       emblaApi.off("select", onSelect);
       emblaApi.off("pointerDown", () => setIsDragging(true));
@@ -64,7 +64,7 @@ function HeroCarousel() {
   };
 
   return (
-    <div 
+    <div
       className="relative w-full overflow-hidden bg-[#fdf6f0] min-h-[420px] h-[55vh] md:h-[80vh] max-h-[850px] group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -101,9 +101,8 @@ function HeroCarousel() {
                   />
                   {/* Text content */}
                   <div
-                    className={`absolute inset-0 flex flex-col justify-center px-8 md:px-14 lg:px-20 transition-all duration-700 ${
-                      i === selectedIndex ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-                    }`}
+                    className={`absolute inset-0 flex flex-col justify-center px-8 md:px-14 lg:px-20 transition-all duration-700 ${i === selectedIndex ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                      }`}
                     style={{ maxWidth: "55%" }}
                   >
                     <p
@@ -122,7 +121,7 @@ function HeroCarousel() {
                       className="text-2xl md:text-3xl lg:text-4xl italic mb-4 md:mb-6"
                       style={{ color: "#c69b55", fontFamily: "'Playfair Display', serif" }}
                     >
-                      On All Orders Above ₹599
+                      On All Orders Above ₹499
                     </p>
                     <p
                       className="text-[10px] md:text-xs mb-6 md:mb-10 leading-relaxed font-medium"
@@ -176,9 +175,8 @@ function HeroCarousel() {
                   />
                   {/* Text content */}
                   <div
-                    className={`absolute inset-0 flex flex-col justify-center px-8 md:px-14 lg:px-20 transition-all duration-700 ${
-                      i === selectedIndex ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-                    }`}
+                    className={`absolute inset-0 flex flex-col justify-center px-8 md:px-14 lg:px-20 transition-all duration-700 ${i === selectedIndex ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                      }`}
                     style={{ maxWidth: "55%" }}
                   >
                     <p
@@ -251,9 +249,8 @@ function HeroCarousel() {
                   />
                   {/* Text content */}
                   <div
-                    className={`absolute inset-0 flex flex-col justify-center px-8 md:px-14 lg:px-20 transition-all duration-700 ${
-                      i === selectedIndex ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-                    }`}
+                    className={`absolute inset-0 flex flex-col justify-center px-8 md:px-14 lg:px-20 transition-all duration-700 ${i === selectedIndex ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                      }`}
                     style={{ maxWidth: "52%" }}
                   >
                     <p
@@ -443,9 +440,9 @@ function HeroCarousel() {
             aria-label={`Go to slide ${i + 1}`}
           >
             {i === selectedIndex && (
-              <div 
+              <div
                 className="absolute left-0 top-0 h-full bg-[#B3184F]"
-                style={{ 
+                style={{
                   animation: "fillProgress 5s linear forwards",
                   animationPlayState: (isHovered || isDragging) ? "paused" : "running"
                 }}
@@ -620,14 +617,14 @@ function ShopByOccasion() {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    
+
     const handleWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
         el.scrollLeft += e.deltaY;
       }
     };
-    
+
     el.addEventListener('wheel', handleWheel, { passive: false });
     return () => el.removeEventListener('wheel', handleWheel);
   }, []);
@@ -666,7 +663,7 @@ function ShopByOccasion() {
           Shop by Occasion
         </h2>
       </div>
-      <div 
+      <div
         ref={scrollRef}
         className="max-w-7xl mx-auto px-4 lg:px-8 overflow-x-auto scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none pb-8"
         onMouseDown={handleMouseDown}
@@ -676,11 +673,11 @@ function ShopByOccasion() {
       >
         <div className="flex gap-5 md:gap-6 w-max">
           {OCCASION_TILES.map((tile) => (
-            <div 
-              key={tile.id} 
+            <div
+              key={tile.id}
               className="w-[82vw] md:w-[42vw] lg:w-[calc((100vw-4rem)/3.15)] xl:w-[386px] flex-shrink-0 snap-start"
             >
-              <Link 
+              <Link
                 to={`/occasion/${tile.id}`}
                 className="group block relative w-full aspect-[4/3] rounded-[24px] overflow-hidden bg-[#FFD1E3] shadow-sm hover:shadow-xl transition-all duration-300"
                 draggable={false}
@@ -692,7 +689,7 @@ function ShopByOccasion() {
                   className="absolute inset-0 w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-                
+
                 <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center justify-between">
                   <h3
                     className="text-white text-xl md:text-2xl font-bold tracking-wide"

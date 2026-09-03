@@ -20,6 +20,7 @@ create table if not exists public.products (
   color           text,
   occasion        text,
   type            text,
+  dropdown_options text,
   is_bestseller   boolean not null default false,
   is_new          boolean not null default true,
   created_at      timestamptz not null default now()

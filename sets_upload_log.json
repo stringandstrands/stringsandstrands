@@ -1,0 +1,77 @@
+{
+  "created": [
+    {
+      "name": "Sets Style 400",
+      "price": 550,
+      "discounted_price": 399,
+      "id": "sets-style-400-1788206872"
+    },
+    {
+      "name": "Sets Style 650",
+      "price": 800,
+      "discounted_price": 649,
+      "id": "sets-style-650-1788206876"
+    },
+    {
+      "name": "Sets Style 686",
+      "price": 836,
+      "discounted_price": 685,
+      "id": "sets-style-686-1788206883"
+    },
+    {
+      "name": "Sets Style 800",
+      "price": 950,
+      "discounted_price": 799,
+      "id": "sets-style-800-1788206888"
+    },
+    {
+      "name": "Sets Style 1000",
+      "price": 1150,
+      "discounted_price": 999,
+      "id": "sets-style-1000-1788206897"
+    },
+    {
+      "name": "Sets Style 1250",
+      "price": 1400,
+      "discounted_price": 1249,
+      "id": "sets-style-1250-1788206902"
+    },
+    {
+      "name": "Sets Style 1296",
+      "price": 1446,
+      "discounted_price": 1295,
+      "id": "sets-style-1296-1788206908"
+    },
+    {
+      "name": "Sets Style 1350",
+      "price": 1500,
+      "discounted_price": 1349,
+      "id": "sets-style-1350-1788206914"
+    },
+    {
+      "name": "Sets Style 1850",
+      "price": 2000,
+      "discounted_price": 1849,
+      "id": "sets-style-1850-1788206919"
+    },
+    {
+      "name": "Sets Style 2200",
+      "price": 2350,
+      "discounted_price": 2199,
+      "id": "sets-style-2200-1788206925"
+    },
+    {
+      "name": "Sets Style 7002",
+      "price": 7152,
+      "discounted_price": 7001,
+      "id": "sets-style-7002-1788206929"
+    },
+    {
+      "name": "Sets Style 7106",
+      "price": 7256,
+      "discounted_price": 7105,
+      "id": "sets-style-7106-1788206935"
+    }
+  ],
+  "skipped": []
+}

@@ -26,6 +26,7 @@ export interface ProductData {
   reviews: Review[];
   rating?: number;
   description?: string;
+  dropdownOptions?: string[];
 }
 
 const TRUST_BADGES = [
@@ -44,6 +45,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
   const [product, setProduct] = useState<ProductData | null>(null);
   const [stockCount, setStockCount] = useState<number>(50);
   const [variants, setVariants] = useState<{id: string, color: string, title: string}[]>([]);
+  const [selectedDropdownOption, setSelectedDropdownOption] = useState<string>('');
 
   const wished = productId ? (wishlist.has(productId) || (isWishlisted ? isWishlisted(productId) : false)) : false;
 
@@ -52,6 +54,11 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
     supabase.from('products').select('*').eq('id', productId).single().then(({ data }) => {
       if (data) {
         setStockCount(data.stock ?? 0);
+        
+        const dropdownOptions = data.dropdown_options
+          ? data.dropdown_options.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : undefined;
+
         setProduct({
           id: data.id,
           title: data.name,
@@ -62,6 +69,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
           reviews: [],
           rating: data.rating,
           description: data.description,
+          dropdownOptions,
         });
 
         // Find variants by base name
@@ -104,6 +112,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
     images: [],
     reviews: [],
     description: '',
+    dropdownOptions: undefined,
   };
 
   const savePercent = displayProduct.originalPrice > 0
@@ -243,6 +252,23 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
               </div>
             )}
 
+            {/* Dropdown Options */}
+            {displayProduct.dropdownOptions && displayProduct.dropdownOptions.length > 0 && (
+              <div className="mb-6">
+                <span className="block text-sm font-semibold text-gray-700 mb-2">Select Option *</span>
+                <select
+                  value={selectedDropdownOption}
+                  onChange={(e) => setSelectedDropdownOption(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-700 focus:outline-none focus:border-[#FF2D74] focus:ring-1 focus:ring-[#FF2D74] transition-all"
+                >
+                  <option value="" disabled>Choose an option...</option>
+                  {displayProduct.dropdownOptions.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Quantity */}
             <div className="mb-6">
               <span className="block text-sm font-semibold text-gray-700 mb-2">Quantity</span>
@@ -272,12 +298,24 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
                 >
                   Out of Stock
                 </button>
+              ) : (displayProduct.dropdownOptions && displayProduct.dropdownOptions.length > 0 && !selectedDropdownOption) ? (
+                <button
+                  disabled
+                  className="flex-1 py-4 rounded-full font-bold text-base bg-pink-100 text-[#FF2D74] cursor-not-allowed border border-pink-200"
+                >
+                  Please select an option
+                </button>
               ) : (
                 <button
                   onClick={async () => {
                     if (!displayProduct.id) return;
+                    
+                    const finalTitle = selectedDropdownOption 
+                      ? `${displayProduct.title} (${selectedDropdownOption})`
+                      : displayProduct.title;
+
                     for (let i = 0; i < quantity; i++) {
-                      await addToCart({ id: String(displayProduct.id), name: displayProduct.title, price: displayProduct.price, image: displayProduct.images[0] });
+                      await addToCart({ id: String(displayProduct.id), name: finalTitle, price: displayProduct.price, image: displayProduct.images[0] });
                     }
                     setAddedToCart(true);
                     setTimeout(() => setAddedToCart(false), 2000);

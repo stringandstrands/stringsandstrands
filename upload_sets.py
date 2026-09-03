@@ -313,7 +313,8 @@ def main():
     print(f"\n📄 Log saved to: {log_path}")
 
     # Cleanup
-    ans = input("\n🗑️  Delete the downloaded temp folder? (y/n): ").strip().lower()
+    # ans = input("\n🗑️  Delete the downloaded temp folder? (y/n): ").strip().lower()
+    ans = "y"
     if ans == "y":
         shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
         print("   Cleaned up.")

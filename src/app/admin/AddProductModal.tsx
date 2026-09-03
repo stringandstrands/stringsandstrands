@@ -51,6 +51,7 @@ export default function AddProductModal({ onClose, onSaved, editProduct }: Props
     color: editProduct?.color || '',
     occasion: editProduct?.occasion || '',
     type: editProduct?.type || '',
+    dropdown_options: editProduct?.dropdown_options || '',
     stock: editProduct?.stock ?? 50,
     rating: editProduct?.rating ?? 5.0,
     is_bestseller: editProduct?.is_bestseller || false,
@@ -347,6 +348,12 @@ export default function AddProductModal({ onClose, onSaved, editProduct }: Props
               <label className="admin-label">Color(s)</label>
               <input className="admin-input" name="color" value={form.color} onChange={handleChange} placeholder="e.g. Gold, Silver, Rose Gold" />
               <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>Separate multiple colors with commas to auto-create variants.</div>
+            </div>
+
+            <div className="admin-field">
+              <label className="admin-label">Dropdown Options</label>
+              <input className="admin-input" name="dropdown_options" value={form.dropdown_options} onChange={handleChange} placeholder="e.g. Red, Blue, Pink" />
+              <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>Comma separated. Creates a single product with a dropdown menu.</div>
             </div>
 
             <div className="admin-field">
