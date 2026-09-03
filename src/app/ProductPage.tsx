@@ -315,7 +315,13 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
                       : displayProduct.title;
 
                     for (let i = 0; i < quantity; i++) {
-                      await addToCart({ id: String(displayProduct.id), name: finalTitle, price: displayProduct.price, image: displayProduct.images[0] });
+                      await addToCart({ 
+                        id: String(displayProduct.id), 
+                        name: finalTitle, 
+                        price: displayProduct.price, 
+                        image: displayProduct.images[0],
+                        selectedOption: selectedDropdownOption || undefined
+                      });
                     }
                     setAddedToCart(true);
                     setTimeout(() => setAddedToCart(false), 2000);

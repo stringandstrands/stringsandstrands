@@ -9,6 +9,7 @@ export interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  selectedOption?: string;
 }
 
 interface CartContextType {
@@ -16,9 +17,8 @@ interface CartContextType {
   cartCount: number;
   cartTotal: number;
   isDrawerOpen: boolean;
-  openDrawer: () => void;
   closeDrawer: () => void;
-  addToCart: (product: { id: string; name: string; price: number; image: string }) => Promise<void>;
+  addToCart: (product: { id: string; name: string; price: number; image: string; selectedOption?: string }) => Promise<void>;
   removeFromCart: (cartItemId: string) => Promise<void>;
   updateQty: (cartItemId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -58,17 +58,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       // Fetch from Supabase for logged-in users
       const { data, error } = await supabase
         .from('cart_items')
-        .select('id, quantity, products(id, name, discounted_price, images)')
+        .select('id, quantity, selected_option, products(id, name, discounted_price, images)')
         .eq('user_id', user.id);
 
       if (!error && data) {
         setCartItems(data.map((item: any) => ({
           id: item.id,
           productId: item.products.id,
-          name: item.products.name,
+          name: item.selected_option ? `${item.products.name} (${item.selected_option})` : item.products.name,
           price: item.products.discounted_price,
           image: item.products.images?.[0] || '',
           quantity: item.quantity,
+          selectedOption: item.selected_option,
         })));
       }
     } else {
@@ -83,16 +84,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (user) {
       const local: CartItem[] = JSON.parse(localStorage.getItem('ss_cart') || '[]');
       if (local.length > 0) {
-        const upserts = local.map(item => ({
-          user_id: user.id,
-          product_id: item.productId,
-          quantity: item.quantity,
-        }));
-        supabase.from('cart_items').upsert(upserts, { onConflict: 'user_id,product_id' })
-          .then(() => {
-            localStorage.removeItem('ss_cart');
-            fetchCart();
-          });
+        const merge = async () => {
+          for (const item of local) {
+            let q = supabase.from('cart_items').select('id, quantity').eq('user_id', user.id).eq('product_id', item.productId);
+            if (item.selectedOption) q = q.eq('selected_option', item.selectedOption);
+            else q = q.is('selected_option', null);
+            
+            const { data: existing } = await q.maybeSingle();
+            if (existing) {
+              await supabase.from('cart_items').update({ quantity: existing.quantity + item.quantity }).eq('id', existing.id);
+            } else {
+              await supabase.from('cart_items').insert({ user_id: user.id, product_id: item.productId, quantity: item.quantity, selected_option: item.selectedOption || null });
+            }
+          }
+          localStorage.removeItem('ss_cart');
+          fetchCart();
+        };
+        merge();
       } else {
         fetchCart();
       }
@@ -105,36 +113,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('ss_cart', JSON.stringify(items));
   };
 
-  const addToCart = async (product: { id: string; name: string; price: number; image: string }) => {
+  const addToCart = async (product: { id: string; name: string; price: number; image: string; selectedOption?: string }) => {
     if (user) {
       // Check if already in cart
-      const { data: existing } = await supabase
-        .from('cart_items')
-        .select('id, quantity')
-        .eq('user_id', user.id)
-        .eq('product_id', product.id)
-        .single();
+      let q = supabase.from('cart_items').select('id, quantity').eq('user_id', user.id).eq('product_id', product.id);
+      if (product.selectedOption) q = q.eq('selected_option', product.selectedOption);
+      else q = q.is('selected_option', null);
+
+      const { data: existing } = await q.maybeSingle();
 
       if (existing) {
         await supabase.from('cart_items').update({ quantity: existing.quantity + 1 }).eq('id', existing.id);
       } else {
-        await supabase.from('cart_items').insert({ user_id: user.id, product_id: product.id, quantity: 1 });
+        await supabase.from('cart_items').insert({ user_id: user.id, product_id: product.id, quantity: 1, selected_option: product.selectedOption || null });
       }
       await fetchCart();
     } else {
       // Local guest cart
       const current: CartItem[] = JSON.parse(localStorage.getItem('ss_cart') || '[]');
-      const idx = current.findIndex(i => i.productId === product.id);
+      const idx = current.findIndex(i => i.productId === product.id && i.selectedOption === product.selectedOption);
       if (idx >= 0) {
         current[idx].quantity += 1;
       } else {
         current.push({
-          id: `local-${product.id}`,
+          id: `local-${product.id}${product.selectedOption ? `-${product.selectedOption}` : ''}`,
           productId: product.id,
           name: product.name,
           price: product.price,
           image: product.image,
           quantity: 1,
+          selectedOption: product.selectedOption,
         });
       }
       saveLocalCart(current);

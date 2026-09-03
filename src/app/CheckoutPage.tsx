@@ -197,7 +197,7 @@ export default function CheckoutPage() {
           <div className="grid lg:grid-cols-[1fr_400px] gap-8">
             
             {/* Shipping Form */}
-            <div className="bg-white rounded-3xl p-6 md:p-8 border border-[#FFD1E3] shadow-sm h-fit">
+            <div className="bg-white rounded-3xl p-6 md:p-8 border border-[#FFD1E3] shadow-sm h-fit min-w-0">
               <h2 className="font-bold text-[#FF2D74] text-xl mb-6 flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#FF2D74] text-white flex items-center justify-center text-sm">1</span>
                 Shipping Details
