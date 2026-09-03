@@ -495,17 +495,6 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
                 <h4 className="font-bold text-gray-800 text-sm mb-1.5">{review.title}</h4>
                 <p className="text-sm text-gray-500 mb-4 line-clamp-3 leading-relaxed">{review.text}</p>
 
-                <div className="flex justify-between items-center pt-4 border-t border-gray-50">
-                  <button className="text-xs text-[#FF2D74] hover:underline font-medium">Full Review</button>
-                  <div className="flex items-center gap-3">
-                    <button className="text-gray-400 hover:text-gray-700 flex items-center gap-1 text-xs transition-colors">
-                      <ThumbsUp size={13} /> 12
-                    </button>
-                    <button className="text-gray-400 hover:text-gray-700 flex items-center gap-1 text-xs transition-colors">
-                      <ThumbsDown size={13} /> 0
-                    </button>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
