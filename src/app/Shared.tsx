@@ -411,11 +411,40 @@ export function ProductCard({
 }
 
 // ── Footer ────────────────────────────────────────────────────────────────────
-const FOOTER_LINKS = [
-  { title: "Shop", links: ["Earrings", "Necklace", "Ring", "Bracelets", "Bangles", "Sets", "Hair Accessories"] },
-  { title: "Company", links: ["About Us", "Contact", "Careers", "Blog"] },
-  { title: "Help", links: ["FAQ", "Shipping Policy", "Returns & Exchange", "Track Order"] },
-  { title: "Legal", links: ["Privacy Policy", "Terms & Conditions"] },
+const FOOTER_LINKS: { title: string; links: { label: string; to: string }[] }[] = [
+  {
+    title: "Shop",
+    links: [
+      { label: "Earrings", to: "/category/earrings" },
+      { label: "Necklace", to: "/category/necklace" },
+      { label: "Ring", to: "/category/ring" },
+      { label: "Bracelets", to: "/category/bracelets" },
+      { label: "Bangles", to: "/category/bangles" },
+      { label: "Sets", to: "/category/sets" },
+      { label: "Hair Accessories", to: "/category/hair accessories" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About Us", to: "/about" },
+      { label: "Contact", to: "/contact" },
+    ],
+  },
+  {
+    title: "Help",
+    links: [
+      { label: "Shipping Policy", to: "/shipping-policy" },
+      { label: "Returns & Exchange", to: "/returns" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy Policy", to: "/privacy-policy" },
+      { label: "Terms & Conditions", to: "/terms" },
+    ],
+  },
 ];
 
 const PinterestIcon = () => (
@@ -459,10 +488,10 @@ export function Footer() {
               </h4>
               <ul className="space-y-2.5">
                 {section.links.map(link => (
-                  <li key={link}>
-                    <button className="text-[#FFEAF2]/60 hover:text-[#FF2D74] text-sm transition-colors">
-                      {link}
-                    </button>
+                  <li key={link.label}>
+                    <Link to={link.to} className="text-[#FFEAF2]/60 hover:text-[#FF2D74] text-sm transition-colors">
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -485,10 +514,14 @@ export function Footer() {
                 {openSection === section.title && (
                   <ul className="pb-3 space-y-2.5 pl-2">
                     {section.links.map(link => (
-                      <li key={link}>
-                        <button className="text-[#FFEAF2]/60 hover:text-[#FF2D74] text-sm transition-colors">
-                          {link}
-                        </button>
+                      <li key={link.label}>
+                        <Link
+                          to={link.to}
+                          onClick={() => setOpenSection(null)}
+                          className="text-[#FFEAF2]/60 hover:text-[#FF2D74] text-sm transition-colors"
+                        >
+                          {link.label}
+                        </Link>
                       </li>
                     ))}
                   </ul>

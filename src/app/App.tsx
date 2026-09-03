@@ -10,6 +10,12 @@ import CheckoutPage from './CheckoutPage';
 import ProfilePage from './ProfilePage';
 import ResetPasswordPage from './ResetPasswordPage';
 import OrderConfirmPage from './OrderConfirmPage';
+import AboutPage from './AboutPage';
+import ContactPage from './ContactPage';
+import ShippingPolicyPage from './ShippingPolicyPage';
+import ReturnsPage from './ReturnsPage';
+import PrivacyPolicyPage from './PrivacyPolicyPage';
+import TermsPage from './TermsPage';
 import CartDrawer from './components/CartDrawer';
 import AuthModal from './components/AuthModal';
 import AdminApp from './admin/AdminApp';
@@ -66,6 +72,12 @@ function AppContent() {
           <Route path="/order-confirm" element={<OrderConfirmPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
+          <Route path="/returns" element={<ReturnsPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
         </Routes>
       </div>
       <Footer />

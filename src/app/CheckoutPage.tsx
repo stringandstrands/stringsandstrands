@@ -7,6 +7,11 @@ import { supabase } from '../lib/supabase';
 
 export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
+
+  const SHIPPING_THRESHOLD = 499;
+  const SHIPPING_FEE = 59;
+  const shippingCharge = cartTotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+  const orderTotal = cartTotal + shippingCharge;
   const { user } = useAuth();
   const navigate = useNavigate();
   
@@ -66,7 +71,7 @@ export default function CheckoutPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: cartTotal
+          amount: orderTotal
         })
       });
       
@@ -91,7 +96,7 @@ export default function CheckoutPage() {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                amount: cartTotal,
+                amount: orderTotal,
                 userId: user?.id,
                 guestEmail: user ? undefined : shipping.email,
                 shippingAddress: shipping,
@@ -289,14 +294,23 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-[#B3184F] font-medium">Shipping</span>
-                  <span className="font-bold text-[#10b981]">FREE</span>
+                  {shippingCharge === 0 ? (
+                    <span className="font-bold text-[#10b981]">FREE</span>
+                  ) : (
+                    <span className="font-bold text-[#FF2D74]">₹{shippingCharge}</span>
+                  )}
                 </div>
+                {shippingCharge > 0 && (
+                  <p className="text-[10px] text-[#B3184F]/50 mt-2 text-right">
+                    Add ₹{SHIPPING_THRESHOLD - cartTotal} more for free shipping
+                  </p>
+                )}
               </div>
               
               <div className="bg-[#fff5f8] -mx-6 md:-mx-8 -mb-6 md:-mb-8 p-6 md:p-8 rounded-b-3xl">
                 <div className="flex justify-between items-end mb-6">
                   <span className="font-bold text-[#B3184F] uppercase tracking-wider text-sm">Total to pay</span>
-                  <span className="font-bold text-[#FF2D74] text-3xl leading-none">₹{cartTotal.toLocaleString()}</span>
+                  <span className="font-bold text-[#FF2D74] text-3xl leading-none">₹{orderTotal.toLocaleString()}</span>
                 </div>
                 <button 
                   type="submit" 
