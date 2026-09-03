@@ -463,6 +463,38 @@ app.post('/api/payment/create-order', async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// USER UTILS
+// GET /api/user/order-count?email=...
+// ─────────────────────────────────────────────────────────────────────────────
+app.get('/api/user/order-count', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.json({ count: 0 });
+
+    // 1. Find user_profile by email
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .ilike('email', email)
+      .single();
+
+    if (!profile) return res.json({ count: 0 });
+
+    // 2. Count orders for this user
+    const { count } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', profile.id)
+      .not('status', 'eq', 'cancelled'); // don't count cancelled orders
+
+    res.json({ count: count || 0 });
+  } catch (err) {
+    console.error('[User Utils] order-count error:', err);
+    res.json({ count: 0 }); // fail safe
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // RAZORPAY — Verify Payment & Fulfil Order
 // POST /api/payment/verify
 // Body: { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount, userId, guestEmail, shippingAddress, cartItems }

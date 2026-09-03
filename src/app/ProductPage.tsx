@@ -4,6 +4,7 @@ import { Star, StarHalf, Minus, Plus, ChevronDown, CheckCircle, ThumbsUp, Thumbs
 import { MAGENTA, CHARCOAL } from './Shared';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../lib/CartContext';
+import { useAuth } from '../lib/AuthContext';
 
 export interface Review {
   id: string;
@@ -31,13 +32,13 @@ export interface ProductData {
 
 const TRUST_BADGES = [
   { icon: <Truck size={18} />, label: 'Free Shipping', sub: 'On orders above ₹499' },
-  { icon: <RotateCcw size={18} />, label: 'Easy Returns', sub: '7-day hassle-free returns' },
   { icon: <ShieldCheck size={18} />, label: 'Certified Quality', sub: 'Anti-tarnish guaranteed' },
 ];
 
 export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: { wishlist: Set<string | number>, toggleWishlist: (id: string | number) => void, isWishlisted?: (id: string) => boolean }) {
   const { productId } = useParams();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
@@ -46,18 +47,33 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
   const [stockCount, setStockCount] = useState<number>(50);
   const [variants, setVariants] = useState<{id: string, color: string, title: string}[]>([]);
   const [selectedDropdownOption, setSelectedDropdownOption] = useState<string>('');
+  
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, title: '', text: '' });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const wished = productId ? (wishlist.has(productId) || (isWishlisted ? isWishlisted(productId) : false)) : false;
 
   useEffect(() => {
     if (!productId) return;
-    supabase.from('products').select('*').eq('id', productId).single().then(({ data }) => {
+    supabase.from('products').select('*').eq('id', productId).single().then(async ({ data }) => {
       if (data) {
         setStockCount(data.stock ?? 0);
         
         const dropdownOptions = data.dropdown_options
           ? data.dropdown_options.split(',').map((s: string) => s.trim()).filter(Boolean)
           : undefined;
+
+        const { data: reviewsData } = await supabase.from('reviews').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+        const reviews = (reviewsData || []).map(r => ({
+          id: r.id,
+          name: r.reviewer_name,
+          rating: r.rating,
+          title: r.title,
+          text: r.review_text,
+          date: new Date(r.created_at).toLocaleDateString(),
+          verified: true
+        }));
 
         setProduct({
           id: data.id,
@@ -66,7 +82,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
           price: data.discounted_price,
           originalPrice: data.price,
           images: data.images || [],
-          reviews: [],
+          reviews: reviews,
           rating: data.rating,
           description: data.description,
           dropdownOptions,
@@ -118,11 +134,58 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
   const savePercent = displayProduct.originalPrice > 0
     ? Math.round(((displayProduct.originalPrice - displayProduct.price) / displayProduct.originalPrice) * 100)
     : 0;
-  const avgRating = displayProduct.rating ?? (displayProduct.reviews.length > 0 ? displayProduct.reviews.reduce((sum, r) => sum + r.rating, 0) / displayProduct.reviews.length : 5.0);
+  const avgRating = displayProduct.reviews.length > 0 
+    ? displayProduct.reviews.reduce((sum, r) => sum + r.rating, 0) / displayProduct.reviews.length 
+    : (displayProduct.rating ?? 5.0);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     if (!e.currentTarget.src.includes('placehold.co')) {
       e.currentTarget.src = 'https://placehold.co/600x800/f5f5f5/cccccc?text=Product+Image';
+    }
+  };
+
+  const submitReview = async () => {
+    if (!user) {
+      alert("Please log in to submit a review.");
+      return;
+    }
+    if (!reviewForm.title || !reviewForm.text) {
+      alert("Please fill in all fields.");
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      const { error } = await supabase.from('reviews').insert({
+        product_id: productId,
+        user_id: user.id,
+        reviewer_name: user.user_metadata?.name || user.email?.split('@')[0] || 'Customer',
+        rating: reviewForm.rating,
+        title: reviewForm.title,
+        review_text: reviewForm.text,
+      });
+      if (error) throw error;
+      
+      const { data: reviewsData } = await supabase.from('reviews').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+      if (reviewsData) {
+        const reviews = reviewsData.map(r => ({
+          id: r.id,
+          name: r.reviewer_name,
+          rating: r.rating,
+          title: r.title,
+          text: r.review_text,
+          date: new Date(r.created_at).toLocaleDateString(),
+          verified: true
+        }));
+        setProduct(p => p ? { ...p, reviews } : p);
+      }
+      
+      setReviewForm({ rating: 5, title: '', text: '' });
+      setReviewFormOpen(false);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to submit review.");
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -364,8 +427,51 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
             <h2 className="text-xl md:text-2xl font-bold text-[#B3184F]" style={{ fontFamily: "'Playfair Display', serif" }}>
               Customer Reviews
             </h2>
-            <button className="text-sm text-[#FF2D74] font-semibold hover:underline">Write a Review</button>
+            <button 
+              onClick={() => {
+                if (!user) alert("Please log in to write a review!");
+                else setReviewFormOpen(!reviewFormOpen);
+              }}
+              className="text-sm text-[#FF2D74] font-semibold hover:underline"
+            >
+              {reviewFormOpen ? 'Cancel' : 'Write a Review'}
+            </button>
           </div>
+
+          {reviewFormOpen && user && (
+            <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+              <h3 className="font-bold text-gray-800 mb-4">Write a Review</h3>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Rating</label>
+                <div className="flex gap-1">
+                  {[1,2,3,4,5].map(i => (
+                    <button key={i} onClick={() => setReviewForm({ ...reviewForm, rating: i })} className="text-amber-400 focus:outline-none">
+                      <Star size={24} fill={i <= reviewForm.rating ? "currentColor" : "none"} strokeWidth={i <= reviewForm.rating ? 0 : 2} className={i > reviewForm.rating ? "text-gray-300" : ""} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Title</label>
+                <input type="text" placeholder="Summary of your experience" value={reviewForm.title} onChange={e => setReviewForm({ ...reviewForm, title: e.target.value })} className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-white focus:outline-none focus:border-[#FF2D74]" />
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Review</label>
+                <textarea rows={4} placeholder="What did you like or dislike?" value={reviewForm.text} onChange={e => setReviewForm({ ...reviewForm, text: e.target.value })} className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-white focus:outline-none focus:border-[#FF2D74] resize-none" />
+              </div>
+              
+              <button disabled={submittingReview} onClick={submitReview} className="px-6 py-3 bg-[#FF2D74] text-white font-bold rounded-full hover:bg-[#D41E5C] transition-colors shadow-sm disabled:opacity-50">
+                {submittingReview ? 'Submitting...' : 'Submit Review'}
+              </button>
+            </div>
+          )}
+
+          {displayProduct.reviews.length === 0 && !reviewFormOpen && (
+            <p className="text-gray-500 italic mb-8">No reviews yet. Be the first to review!</p>
+          )}
 
           <div className="flex overflow-x-auto gap-4 pb-4 snap-x scrollbar-hide">
             {displayProduct.reviews.map(review => (

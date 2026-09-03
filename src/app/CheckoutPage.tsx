@@ -8,10 +8,10 @@ import { supabase } from '../lib/supabase';
 export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
 
-  const SHIPPING_THRESHOLD = 499;
-  const SHIPPING_FEE = 59;
-  const shippingCharge = cartTotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-  const orderTotal = cartTotal + shippingCharge;
+  const [loading, setLoading] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [orderCount, setOrderCount] = useState<number | null>(null);
+  const [firstOrderDiscount, setFirstOrderDiscount] = useState<number>(0);
   const { user } = useAuth();
   const navigate = useNavigate();
   
@@ -27,6 +27,42 @@ export default function CheckoutPage() {
     state: '',
     pincode: ''
   });
+
+  const subtotalAfterDiscount = cartTotal - firstOrderDiscount;
+  const SHIPPING_THRESHOLD = 499;
+  const SHIPPING_FEE = 59;
+  const shippingCharge = subtotalAfterDiscount >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+  const orderTotal = subtotalAfterDiscount + shippingCharge;
+
+  // Check order count for 5% discount
+  useEffect(() => {
+    const emailToCheck = user?.email || shipping.email;
+    if (!emailToCheck || !emailToCheck.includes('@')) {
+      setOrderCount(null);
+      setFirstOrderDiscount(0);
+      return;
+    }
+
+    const checkOrders = async () => {
+      try {
+        const apiBase = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001');
+        const res = await fetch(`${apiBase}/api/user/order-count?email=${encodeURIComponent(emailToCheck)}`);
+        const data = await res.json();
+        setOrderCount(data.count);
+        
+        if (data.count === 0 && cartTotal > 0) {
+          setFirstOrderDiscount(Math.round(cartTotal * 0.05));
+        } else {
+          setFirstOrderDiscount(0);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const debounceId = setTimeout(checkOrders, 500);
+    return () => clearTimeout(debounceId);
+  }, [user?.email, shipping.email, cartTotal]);
 
   // Load saved addresses
   useEffect(() => {
@@ -292,6 +328,12 @@ export default function CheckoutPage() {
                   <span className="text-[#B3184F] font-medium">Subtotal</span>
                   <span className="font-bold text-[#FF2D74]">₹{cartTotal.toLocaleString()}</span>
                 </div>
+                {firstOrderDiscount > 0 && (
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[#10b981] font-medium">First Order Discount (5%)</span>
+                    <span className="font-bold text-[#10b981]">-₹{firstOrderDiscount.toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-[#B3184F] font-medium">Shipping</span>
                   {shippingCharge === 0 ? (
