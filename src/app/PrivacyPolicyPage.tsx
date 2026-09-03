@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
         <PolicySection title="3. Data Storage & Security">
           <p>
             Your account data, order history, and wishlist are stored securely using{' '}
-            <strong>Supabase</strong> (a secure cloud database platform). All data is
+            <strong>Database</strong> (a secure cloud database platform). All data is
             encrypted in transit using SSL/TLS.
           </p>
           <p>
@@ -63,7 +63,7 @@ export default function PrivacyPolicyPage() {
           <ul className="list-disc pl-5 space-y-2 text-[#B3184F]/70 text-sm">
             <li><strong>Shiprocket & courier partners</strong> — to deliver your orders (name, address, phone)</li>
             <li><strong>Razorpay</strong> — to process payments</li>
-            <li><strong>Supabase</strong> — for secure data storage</li>
+            <li><strong>Database</strong> — for secure data storage</li>
             <li><strong>Legal authorities</strong> — when required by law</li>
           </ul>
         </PolicySection>

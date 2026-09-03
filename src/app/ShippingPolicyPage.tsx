@@ -29,7 +29,7 @@ export default function ShippingPolicyPage() {
       </section>
 
       {/* Highlights */}
-      <section className="max-w-5xl mx-auto px-4 -mt-8">
+      <section className="relative z-10 max-w-5xl mx-auto px-4 -mt-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {HIGHLIGHTS.map(h => (
             <div key={h.label} className="bg-white rounded-2xl p-5 shadow-sm flex flex-col items-center text-center gap-2">
