@@ -473,7 +473,7 @@ const CATEGORIES = [
   { label: "Bracelets", img: "/categories/cat_bracelets.png" },
   { label: "Bangles", img: "/categories/cat_bangles.png" },
   { label: "Sets", img: "/categories/cat_sets.png" },
-  { label: "Pendants", img: "/categories/cat_pendants.png" },
+  { label: "Hair Accessories", img: "/categories/cat_pendants.png" },
 ];
 
 function CategoryCircle({ label, img }: { label: string; img: string }) {

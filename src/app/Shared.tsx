@@ -71,7 +71,7 @@ export function AnnouncementBar() {
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
-const NAV_ITEMS = ["Earrings", "Necklace", "Ring", "Bracelets", "Bangles", "Sets", "Pendants"];
+const NAV_ITEMS = ["Earrings", "Necklace", "Ring", "Bracelets", "Bangles", "Sets", "Hair Accessories"];
 const SEARCH_PLACEHOLDERS = [
   "Search by style, mood, or occasion…",
   "Find the perfect gift…",
