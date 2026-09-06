@@ -1035,22 +1035,30 @@ async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shipro
   const fromAddress = 'Strings & Strands <onboarding@resend.dev>';
 
   if (userEmail) {
-    await resend.emails.send({
-      from: fromAddress,
-      to: userEmail,
-      subject: `Order Confirmed #${orderShortId} - Strings & Strands`,
-      html: customerHtml,
-    });
-    console.log('[Email] Confirmation sent to customer:', userEmail);
+    try {
+      await resend.emails.send({
+        from: fromAddress,
+        to: userEmail,
+        subject: `Order Confirmed #${orderShortId} - Strings & Strands`,
+        html: customerHtml,
+      });
+      console.log('[Email] Confirmation sent to customer:', userEmail);
+    } catch (e) {
+      console.log('[Email] Failed to send customer email (likely Resend Sandbox restriction):', e.message);
+    }
   }
 
-  await resend.emails.send({
-    from: fromAddress,
-    to: process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com',
-    subject: `New Order #${orderShortId} - Rs.${totalInr} from ${userName}`,
-    html: ownerHtml,
-  });
-  console.log('[Email] Notification sent to owner:', process.env.OWNER_EMAIL);
+  try {
+    await resend.emails.send({
+      from: fromAddress,
+      to: process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com',
+      subject: `New Order #${orderShortId} - Rs.${totalInr} from ${userName}`,
+      html: ownerHtml,
+    });
+    console.log('[Email] Notification sent to owner:', process.env.OWNER_EMAIL);
+  } catch (e) {
+    console.log('[Email] Failed to send owner email:', e.message);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
