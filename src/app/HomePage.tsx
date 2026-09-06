@@ -189,19 +189,19 @@ function HeroCarousel() {
                       className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-1"
                       style={{ color: "#3a2d20", fontFamily: "'Playfair Display', serif" }}
                     >
-                      New Here?
+                      Check Out
                     </h2>
                     <p
                       className="text-2xl md:text-3xl lg:text-4xl italic mb-4 md:mb-6"
                       style={{ color: "#b58c4f", fontFamily: "'Playfair Display', serif" }}
                     >
-                      Get 5% Off At Checkout
+                      New Arrivals
                     </p>
                     <p
                       className="text-[10px] md:text-xs mb-6 md:mb-10 leading-relaxed font-medium"
                       style={{ color: "#7a6a5a", fontFamily: "'Inter', sans-serif" }}
                     >
-                      Use code <strong style={{ color: "#3a2d20" }}>NEW5</strong> at checkout for an exclusive discount.
+                      
                     </p>
                     <div>
                       <Link
@@ -263,19 +263,19 @@ function HeroCarousel() {
                       className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-1"
                       style={{ color: "#2c1f10", fontFamily: "'Playfair Display', serif" }}
                     >
-                      Order Above ₹499
+                      Order Above ₹699
                     </h2>
                     <p
                       className="text-xl md:text-2xl lg:text-3xl italic font-semibold mb-4 md:mb-5"
                       style={{ color: "#9a7a45", fontFamily: "'Playfair Display', serif" }}
                     >
-                      & Get a Free Gift
+                      & Get a Free Gift!
                     </p>
                     <p
                       className="text-[12px] md:text-sm mb-6 md:mb-8 leading-relaxed"
                       style={{ color: "#5c4a35", fontFamily: "'Inter', sans-serif" }}
                     >
-                      Automatically added to your order at checkout.
+                      
                     </p>
                     <div>
                       <Link

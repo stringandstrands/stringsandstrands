@@ -604,6 +604,18 @@ app.post('/api/payment/verify', async (req, res) => {
     const { error: itemsError } = await supabase.from('order_items').insert(orderItemsData);
     if (itemsError) throw new Error(`Order items creation failed: ${itemsError.message}`);
 
+    // ── Decrement stock for ordered products ─────────────────────────────────
+    for (const item of cartItems) {
+      const pId = item.productId || item.id;
+      if (pId) {
+        const { data: prod } = await supabase.from('products').select('stock').eq('id', pId).single();
+        if (prod && typeof prod.stock === 'number') {
+          const newStock = Math.max(0, prod.stock - item.quantity);
+          await supabase.from('products').update({ stock: newStock }).eq('id', pId);
+        }
+      }
+    }
+
     // ── Step 5: Create Shiprocket order (synchronous — must succeed) ─────────
     let shiprocketOrderId = null;
     try {

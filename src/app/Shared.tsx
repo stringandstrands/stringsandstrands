@@ -382,14 +382,17 @@ export function ProductCard({
         {/* Slides up on desktop hover */}
         <div className="hidden md:block absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
           <button
+            disabled={(product as any).stock === 0}
             onClick={handleAdd}
             className={`w-full py-2.5 text-[11px] font-bold tracking-widest uppercase transition-colors ${
-              addedToBag
-                ? "bg-[#D41E5C] text-[#FFEAF2]"
-                : "bg-[#FF2D74] hover:bg-[#D41E5C] text-[#FFEAF2]"
+              (product as any).stock === 0
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : addedToBag
+                  ? "bg-[#D41E5C] text-[#FFEAF2]"
+                  : "bg-[#FF2D74] hover:bg-[#D41E5C] text-[#FFEAF2]"
             }`}
           >
-            {addedToBag ? "Added ✓" : "Add to Bag"}
+            {(product as any).stock === 0 ? "Out of Stock" : addedToBag ? "Added ✓" : "Add to Bag"}
           </button>
         </div>
       </div>
@@ -400,10 +403,15 @@ export function ProductCard({
           <span className="text-xs text-[#B3184F] line-through">₹{product.originalPrice}</span>
         </div>
         <button
+          disabled={(product as any).stock === 0}
           onClick={handleAdd}
-          className="md:hidden mt-2 w-full py-1.5 text-[10px] font-bold rounded-xl bg-[#FF2D74] text-[#FFEAF2] tracking-widest uppercase"
+          className={`md:hidden mt-2 w-full py-1.5 text-[10px] font-bold rounded-xl tracking-widest uppercase ${
+            (product as any).stock === 0
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-[#FF2D74] text-[#FFEAF2]"
+          }`}
         >
-          {addedToBag ? "Added ✓" : "Add to Bag"}
+          {(product as any).stock === 0 ? "Out of Stock" : addedToBag ? "Added ✓" : "Add to Bag"}
         </button>
       </div>
     </Link>
