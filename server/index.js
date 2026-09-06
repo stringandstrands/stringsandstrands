@@ -564,7 +564,7 @@ app.post('/api/payment/verify', async (req, res) => {
     }
 
     // ── Step 3: Save address ──────────────────────────────────────────────────
-    const { email: _excludedEmail, ...addressFields } = shippingAddress;
+    const { email: _excludedEmail, id: _excludedId, created_at: _excludedCreatedAt, user_id: _excludedUserId, ...addressFields } = shippingAddress;
     const { data: addressData, error: addressError } = await supabase
       .from('addresses')
       .insert({ user_id: finalUserId, ...addressFields })
