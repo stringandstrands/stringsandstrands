@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { CheckCircle, XCircle, Package, CreditCard, Copy, Check, ShoppingBag, RefreshCw } from 'lucide-react';
 
@@ -71,7 +71,8 @@ export default function OrderConfirmPage() {
 
   if (!state) return null;
 
-  const shortOrderId = state.orderId ? state.orderId.slice(0, 8).toUpperCase() : null;
+  const safeOrderId = state.orderId ? String(state.orderId) : '';
+  const shortOrderId = safeOrderId ? safeOrderId.slice(0, 8).toUpperCase() : null;
 
   // SUCCESS
   if (state.success) {
@@ -113,7 +114,7 @@ export default function OrderConfirmPage() {
                         <p className="font-bold text-[#B3184F] font-mono text-sm">#{shortOrderId}</p>
                       </div>
                     </div>
-                    <CopyButton value={state.orderId!} />
+                    <CopyButton value={safeOrderId} />
                   </div>
                 )}
 
@@ -128,7 +129,7 @@ export default function OrderConfirmPage() {
                         <p className="font-bold text-[#B3184F] font-mono text-sm">{state.shiprocketOrderId}</p>
                       </div>
                     </div>
-                    <CopyButton value={state.shiprocketOrderId} />
+                    <CopyButton value={String(state.shiprocketOrderId)} />
                   </div>
                 )}
 
@@ -143,7 +144,7 @@ export default function OrderConfirmPage() {
                         <p className="font-bold text-[#B3184F] font-mono text-xs truncate max-w-[180px]">{state.razorpayPaymentId}</p>
                       </div>
                     </div>
-                    <CopyButton value={state.razorpayPaymentId} />
+                    <CopyButton value={String(state.razorpayPaymentId)} />
                   </div>
                 )}
               </div>
