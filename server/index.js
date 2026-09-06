@@ -512,6 +512,7 @@ app.post('/api/payment/verify', async (req, res) => {
       cartItems
     } = req.body;
 
+    console.log('[Verify] Step 1: Checking signature. order_id:', razorpay_order_id, 'payment_id:', razorpay_payment_id);
     // ── Step 1: Verify Razorpay signature ────────────────────────────────────
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -519,12 +520,15 @@ app.post('/api/payment/verify', async (req, res) => {
       .digest('hex');
 
     if (expectedSignature !== razorpay_signature) {
+      console.log('[Verify] ❌ Signature mismatch!');
       return res.status(400).json({
         error: 'Invalid payment signature',
         paymentFailed: true,
       });
     }
+    console.log('[Verify] ✅ Step 1 passed: Signature valid');
 
+    console.log('[Verify] Step 2: Resolving user. userId:', userId, 'guestEmail:', guestEmail);
     // ── Step 2: Resolve / create user ────────────────────────────────────────
     let finalUserId = userId;
     let customerEmail = guestEmail || '';
@@ -563,6 +567,8 @@ app.post('/api/payment/verify', async (req, res) => {
       customerName = profile?.name || shippingAddress.full_name || '';
     }
 
+    console.log('[Verify] ✅ Step 2 passed: finalUserId=', finalUserId);
+    console.log('[Verify] Step 3: Saving address...');
     // ── Step 3: Save address ──────────────────────────────────────────────────
     // Explicitly pick only the columns that exist in the addresses table
     const cleanAddress = {
@@ -582,7 +588,9 @@ app.post('/api/payment/verify', async (req, res) => {
       .single();
 
     if (addressError) throw new Error(`Address creation failed: ${addressError.message}`);
+    console.log('[Verify] ✅ Step 3 passed: address id=', addressData?.id);
 
+    console.log('[Verify] Step 4: Creating order in Supabase. amount:', amount);
     // ── Step 4: Create order in Supabase ─────────────────────────────────────
     const amountInPaise = Math.round(amount * 100);
 
@@ -600,7 +608,9 @@ app.post('/api/payment/verify', async (req, res) => {
       .single();
 
     if (orderError || !sbOrder) throw new Error(`Order creation failed: ${orderError?.message}`);
+    console.log('[Verify] ✅ Step 4 passed: orderId=', sbOrder?.id);
 
+    console.log('[Verify] Step 5: Inserting order items. count:', cartItems?.length);
     // Build order items — snapshot name & price so deleted products don't break history
     const orderItemsData = cartItems.map(item => ({
       order_id: sbOrder.id,
@@ -626,23 +636,26 @@ app.post('/api/payment/verify', async (req, res) => {
       }
     }
 
-    // ── Step 5: Create Shiprocket order (synchronous — must succeed) ─────────
+    // ── Respond immediately so Render/Vercel don't timeout ───────────────────
+    // Shiprocket + email are fired as background tasks AFTER responding
+    console.log('[Verify] ✅ All DB steps done. Responding to client immediately.');
+    res.json({
+      success: true,
+      orderId: sbOrder.id,
+      shiprocketOrderId: null, // will be updated in background
+      razorpayPaymentId: razorpay_payment_id,
+    });
+
+    // ── Background: Create Shiprocket order ──────────────────────────────────
     let shiprocketOrderId = null;
     try {
       shiprocketOrderId = await createShiprocketOrder(sbOrder.id);
+      console.log('[Verify] ✅ Shiprocket order created in background:', shiprocketOrderId);
     } catch (srErr) {
-      console.error('[Shiprocket] Order creation failed after payment:', srErr.message);
-      // Payment succeeded but shipping failed — return partial failure so frontend shows refund message
-      return res.status(207).json({
-        success: false,
-        shiprocketFailed: true,
-        orderId: sbOrder.id,
-        razorpayPaymentId: razorpay_payment_id,
-        error: 'Shipping order could not be created. Your payment will be refunded within 7 business days.',
-      });
+      console.error('[Shiprocket] Background order creation failed:', srErr.message);
     }
 
-    // ── Step 6: Send confirmation emails (non-fatal) ──────────────────────────
+    // ── Background: Send confirmation emails ─────────────────────────────────
     try {
       await sendOrderConfirmationEmail({
         orderId: sbOrder.id,
@@ -650,22 +663,20 @@ app.post('/api/payment/verify', async (req, res) => {
         userName: customerName,
         shiprocketOrderId,
       });
+      console.log('[Email] ✅ Confirmation email sent in background.');
     } catch (emailErr) {
-      console.error('[Email] Confirmation email failed (non-fatal):', emailErr.message);
+      console.error('[Email] Background email failed (non-fatal):', emailErr.message);
     }
 
-    // ── All done ──────────────────────────────────────────────────────────────
-    res.json({
-      success: true,
-      orderId: sbOrder.id,
-      shiprocketOrderId,
-      razorpayPaymentId: razorpay_payment_id,
-    });
   } catch (err) {
     console.error('[Razorpay] Verify error:', err);
-    res.status(500).json({ error: 'Payment verification failed', detail: err.message, paymentFailed: true });
+    // Only send error response if we haven't already responded
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Payment verification failed', detail: err.message, paymentFailed: true });
+    }
   }
 });
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SHIPROCKET HELPER — extracted so verify can call it directly (no localhost)

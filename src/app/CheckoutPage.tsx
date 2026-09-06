@@ -32,6 +32,8 @@ export default function CheckoutPage() {
 
 
 
+
+
   // Load saved addresses
   useEffect(() => {
     if (user) {
