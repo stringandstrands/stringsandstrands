@@ -564,10 +564,20 @@ app.post('/api/payment/verify', async (req, res) => {
     }
 
     // ── Step 3: Save address ──────────────────────────────────────────────────
-    const { email: _excludedEmail, id: _excludedId, created_at: _excludedCreatedAt, user_id: _excludedUserId, ...addressFields } = shippingAddress;
+    // Explicitly pick only the columns that exist in the addresses table
+    const cleanAddress = {
+      full_name:    shippingAddress.full_name    || '',
+      phone:        shippingAddress.phone        || '',
+      address_line1: shippingAddress.address_line1 || '',
+      address_line2: shippingAddress.address_line2 || '',
+      city:         shippingAddress.city         || '',
+      state:        shippingAddress.state        || '',
+      pincode:      String(shippingAddress.pincode || ''),
+      is_default:   false,
+    };
     const { data: addressData, error: addressError } = await supabase
       .from('addresses')
-      .insert({ user_id: finalUserId, ...addressFields })
+      .insert({ user_id: finalUserId, ...cleanAddress })
       .select()
       .single();
 
