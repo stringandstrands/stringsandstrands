@@ -107,7 +107,13 @@ export default function CheckoutPage() {
                 cartItems: cartItems
               })
             });
-            const verifyData = await verifyRes.json();
+            let verifyData;
+            try {
+              verifyData = await verifyRes.json();
+            } catch (parseErr) {
+              console.error('Failed to parse verify response:', parseErr);
+              throw new Error('Server returned an invalid response (possibly 502 Bad Gateway). Please try again in a minute.');
+            }
 
             if (verifyData.success) {
               // All good — order + Shiprocket ID created
