@@ -26,7 +26,7 @@ export default function CheckoutPage() {
 
   const subtotalAfterDiscount = cartTotal;
   const SHIPPING_THRESHOLD = 499;
-  const SHIPPING_FEE = 59;
+  const SHIPPING_FEE = 0; // Temporarily 0 for testing
   const shippingCharge = subtotalAfterDiscount >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
   const orderTotal = subtotalAfterDiscount + shippingCharge;
 
