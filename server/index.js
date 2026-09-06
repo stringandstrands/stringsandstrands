@@ -1083,6 +1083,50 @@ app.post('/api/email/order-confirmation', async (req, res) => {
   }
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// EMAIL — Test endpoint for debugging Render SMTP
+// GET /api/test-email
+// ─────────────────────────────────────────────────────────────────────────────
+app.get('/api/test-email', async (req, res) => {
+  try {
+    const nodemailer = await import('nodemailer');
+    const transporter = nodemailer.default.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
+    });
+    
+    // Test the connection before sending
+    await transporter.verify();
+    
+    const info = await transporter.sendMail({
+      from: `"Strings & Strands Test" <${process.env.GMAIL_USER}>`,
+      to: process.env.OWNER_EMAIL || process.env.GMAIL_USER,
+      subject: 'Render Test Email - Strings & Strands',
+      text: 'If you see this, the Render email config works perfectly!',
+    });
+    
+    res.json({ 
+      success: true, 
+      message: 'Email sent successfully from Render!',
+      info 
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      error: 'Failed to send email from Render', 
+      detail: err.message, 
+      stack: err.stack,
+      gmailUserSet: !!process.env.GMAIL_USER,
+      gmailPassSet: !!process.env.GMAIL_APP_PASSWORD,
+      ownerEmailSet: !!process.env.OWNER_EMAIL
+    });
+  }
+});
 
 // START SERVER
 // ─────────────────────────────────────────────────────────────────────────────
