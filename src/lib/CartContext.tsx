@@ -58,7 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       // Fetch from Supabase for logged-in users
       const { data, error } = await supabase
         .from('cart_items')
-        .select('id, quantity, selected_option, products(id, name, discounted_price, images)')
+        .select('id, quantity, selected_option, products(id, name, price, discounted_price, images)')
         .eq('user_id', user.id);
 
       if (!error && data) {
@@ -66,7 +66,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           id: item.id,
           productId: item.products.id,
           name: item.selected_option ? `${item.products.name} (${item.selected_option})` : item.products.name,
-          price: item.products.discounted_price,
+          price: item.products.discounted_price ?? item.products.price ?? 0,
           image: item.products.images?.[0] || '',
           quantity: item.quantity,
           selectedOption: item.selected_option,
