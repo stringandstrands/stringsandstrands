@@ -535,7 +535,7 @@ app.post('/api/payment/verify', async (req, res) => {
       const { data: profile } = await supabase
         .from('user_profiles')
         .select('id, email, name')
-        .eq('email', guestEmail)
+        .ilike('email', guestEmail)
         .single();
 
       if (profile) {
@@ -653,7 +653,7 @@ app.post('/api/payment/verify', async (req, res) => {
     });
   } catch (err) {
     console.error('[Razorpay] Verify error:', err);
-    res.status(500).json({ error: 'Payment verification failed', paymentFailed: true });
+    res.status(500).json({ error: 'Payment verification failed', detail: err.message, paymentFailed: true });
   }
 });
 

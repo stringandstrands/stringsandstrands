@@ -141,7 +141,7 @@ export default function CheckoutPage() {
                 state: {
                   success: false,
                   paymentFailed: verifyData.paymentFailed ?? true,
-                  error: verifyData.error || 'Payment verification failed. Please contact support.',
+                  error: verifyData.detail || verifyData.error || 'Payment verification failed. Please contact support.',
                 },
               });
             }
