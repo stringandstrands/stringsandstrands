@@ -971,10 +971,8 @@ async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shipro
   const customerHtml = `
     <div style="font-family:'Georgia',serif;max-width:600px;margin:auto;background:#fff;border:1px solid #FFD1E3;border-radius:16px;overflow:hidden;">
       <div style="background:linear-gradient(135deg,#FF2D74,#B3184F);padding:32px;text-align:center;">
-        <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border:2px solid rgba(255,255,255,0.5);border-radius:50%;margin-bottom:16px;background:rgba(255,255,255,0.1);">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border:2px solid rgba(255,255,255,0.5);border-radius:50%;margin-bottom:16px;background:rgba(255,255,255,0.1);color:#fff;font-size:32px;">
+          &#10003;
         </div>
         <h1 style="margin:0;color:#fff;font-size:28px;letter-spacing:1px;">Order Confirmed!</h1>
         <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:15px;">Thank you, ${userName}!</p>
