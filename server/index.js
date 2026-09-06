@@ -934,7 +934,7 @@ async function sendTrackingUpdateEmail({ orderId, currentStatus, shiprocketOrder
   `;
 
   await resend.emails.send({
-    from: 'Strings & Strands <onboarding@resend.dev>',
+    from: 'Strings & Strands <orders@stringsandstrands.in>',
     to: profile.email,
     subject: `Order Update: Your package is ${currentStatus}!`,
     html: customerHtml,
@@ -1032,7 +1032,7 @@ async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shipro
     </div>
   `;
 
-  const fromAddress = 'Strings & Strands <onboarding@resend.dev>';
+  const fromAddress = 'Strings & Strands <orders@stringsandstrands.in>';
 
   if (userEmail) {
     try {
@@ -1087,7 +1087,7 @@ app.get('/api/test-email', async (req, res) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     
     const info = await resend.emails.send({
-      from: 'Strings & Strands Test <onboarding@resend.dev>',
+      from: 'Strings & Strands Test <orders@stringsandstrands.in>',
       to: process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com',
       subject: 'Render Test Email - Resend API',
       text: 'If you see this, Resend works perfectly and bypassed Render firewall!',
