@@ -908,16 +908,8 @@ async function sendTrackingUpdateEmail({ orderId, currentStatus, shiprocketOrder
   const { data: profile } = await supabase.from('user_profiles').select('email, name').eq('id', order.user_id).single();
   if (!profile || !profile.email) return;
 
-  const nodemailer = await import('nodemailer');
-  const transporter = nodemailer.default.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-  });
+  const { Resend } = await import('resend');
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   const shortId = orderId.slice(0, 8).toUpperCase();
   const customerHtml = `
@@ -941,8 +933,8 @@ async function sendTrackingUpdateEmail({ orderId, currentStatus, shiprocketOrder
     </div>
   `;
 
-  await transporter.sendMail({
-    from: `"Strings & Strands" <${process.env.GMAIL_USER}>`,
+  await resend.emails.send({
+    from: 'Strings & Strands <onboarding@resend.dev>',
     to: profile.email,
     subject: `Order Update: Your package is ${currentStatus}!`,
     html: customerHtml,
@@ -952,16 +944,8 @@ async function sendTrackingUpdateEmail({ orderId, currentStatus, shiprocketOrder
 // EMAIL HELPER — reusable, called directly by verify (no localhost)
 // ─────────────────────────────────────────────────────────────────────────────
 async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shiprocketOrderId }) {
-  const nodemailer = await import('nodemailer');
-  const transporter = nodemailer.default.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-  });
+  const { Resend } = await import('resend');
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   const { data: order } = await supabase
     .from('orders')
@@ -1050,10 +1034,10 @@ async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shipro
     </div>
   `;
 
-  const fromAddress = `Strings & Strands <${process.env.GMAIL_USER}>`;
+  const fromAddress = 'Strings & Strands <onboarding@resend.dev>';
 
   if (userEmail) {
-    await transporter.sendMail({
+    await resend.emails.send({
       from: fromAddress,
       to: userEmail,
       subject: `Order Confirmed #${orderShortId} - Strings & Strands`,
@@ -1062,9 +1046,9 @@ async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shipro
     console.log('[Email] Confirmation sent to customer:', userEmail);
   }
 
-  await transporter.sendMail({
+  await resend.emails.send({
     from: fromAddress,
-    to: process.env.OWNER_EMAIL,
+    to: process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com',
     subject: `New Order #${orderShortId} - Rs.${totalInr} from ${userName}`,
     html: ownerHtml,
   });
@@ -1093,43 +1077,26 @@ app.post('/api/email/order-confirmation', async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 app.get('/api/test-email', async (req, res) => {
   try {
-    const nodemailer = await import('nodemailer');
-    const transporter = nodemailer.default.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
+    const { Resend } = await import('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
     
-    // Test the connection before sending
-    await transporter.verify();
-    
-    const info = await transporter.sendMail({
-      from: `"Strings & Strands Test" <${process.env.GMAIL_USER}>`,
-      to: process.env.OWNER_EMAIL || process.env.GMAIL_USER,
-      subject: 'Render Test Email - Strings & Strands',
-      text: 'If you see this, the Render email config works perfectly!',
+    const info = await resend.emails.send({
+      from: 'Strings & Strands Test <onboarding@resend.dev>',
+      to: process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com',
+      subject: 'Render Test Email - Resend API',
+      text: 'If you see this, Resend works perfectly and bypassed Render firewall!',
     });
     
     res.json({ 
       success: true, 
-      message: 'Email sent successfully from Render!',
+      message: 'Email sent successfully via Resend API!',
       info 
     });
   } catch (err) {
     res.status(500).json({ 
-      error: 'Failed to send email from Render', 
+      error: 'Failed to send email via Resend', 
       detail: err.message, 
       stack: err.stack,
-      gmailUserSet: !!process.env.GMAIL_USER,
-      gmailPassSet: !!process.env.GMAIL_APP_PASSWORD,
-      ownerEmailSet: !!process.env.OWNER_EMAIL
     });
   }
 });
