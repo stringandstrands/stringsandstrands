@@ -1086,21 +1086,68 @@ app.get('/api/test-email', async (req, res) => {
     const { Resend } = await import('resend');
     const resend = new Resend(process.env.RESEND_API_KEY);
     
+    const customerHtml = `
+      <div style="font-family:'Georgia',serif;max-width:600px;margin:auto;background:#fff;border:1px solid #FFD1E3;border-radius:16px;overflow:hidden;">
+        <div style="background:linear-gradient(135deg,#FF2D74,#B3184F);padding:32px;text-align:center;">
+          <div style="display:inline-block;width:64px;height:64px;line-height:64px;text-align:center;border:2px solid rgba(255,255,255,0.5);border-radius:50%;margin-bottom:16px;background:rgba(255,255,255,0.1);color:#fff;font-size:32px;">
+            &#10003;
+          </div>
+          <h1 style="margin:0;color:#fff;font-size:28px;letter-spacing:1px;">Order Confirmed!</h1>
+          <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:15px;">Thank you, Test User!</p>
+        </div>
+        <div style="padding:28px 32px;">
+          <p style="color:#B3184F;font-size:15px;margin-top:0;">Your order has been placed and handed to our shipping partner. You will receive tracking updates soon.</p>
+          <div style="background:#fff5f8;border-radius:10px;padding:16px 20px;margin:20px 0;border:1px solid #FFD1E3;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="color:#888;font-size:13px;">Order ID</span>
+              <span style="color:#B3184F;font-weight:700;font-size:13px;font-family:monospace;">#TEST-123</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:#888;font-size:13px;">Order Date</span>
+              <span style="color:#B3184F;font-size:13px;">${new Date().toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+            <thead>
+              <tr style="background:#FFD1E3;">
+                <th style="padding:10px 12px;text-align:left;color:#B3184F;font-size:12px;text-transform:uppercase;">Item</th>
+                <th style="padding:10px 12px;text-align:center;color:#B3184F;font-size:12px;text-transform:uppercase;">Qty</th>
+                <th style="padding:10px 12px;text-align:right;color:#B3184F;font-size:12px;text-transform:uppercase;">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:8px 12px;border-bottom:1px solid #FFD1E3;">Test Jewellery Item</td>
+                <td style="padding:8px 12px;border-bottom:1px solid #FFD1E3;text-align:center;">1</td>
+                <td style="padding:8px 12px;border-bottom:1px solid #FFD1E3;text-align:right;font-weight:600;">&#8377;999</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="text-align:right;padding:12px 0;border-top:2px solid #FFD1E3;">
+            <span style="color:#B3184F;font-size:18px;font-weight:700;">Total: &#8377;999</span>
+          </div>
+        </div>
+        <div style="background:#fff5f8;padding:20px 32px;text-align:center;border-top:1px solid #FFD1E3;">
+          <p style="margin:0;font-size:12px;color:#aaa;">Strings &amp; Strands &mdash; Timeless jewellery for every chapter.</p>
+        </div>
+      </div>
+    `;
+    
     const info = await resend.emails.send({
-      from: 'Strings & Strands Test <orders@stringsandstrands.in>',
+      from: 'Strings & Strands <orders@stringsandstrands.in>',
       to: process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com',
-      subject: 'Render Test Email - Resend API',
-      text: 'If you see this, Resend works perfectly and bypassed Render firewall!',
+      subject: 'Test Design Preview - Strings & Strands',
+      html: customerHtml,
     });
     
     res.json({ 
       success: true, 
-      message: 'Email sent successfully via Resend API!',
+      message: 'Design preview email sent successfully!',
       info 
     });
   } catch (err) {
     res.status(500).json({ 
-      error: 'Failed to send email via Resend', 
+      error: 'Failed to send preview email', 
       detail: err.message, 
       stack: err.stack,
     });
