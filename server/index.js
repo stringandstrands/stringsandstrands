@@ -1133,21 +1133,11 @@ app.get('/api/test-email', async (req, res) => {
       </div>
     `;
     
-    const info = await resend.emails.send({
-      from: 'Strings & Strands <orders@stringsandstrands.in>',
-      to: process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com',
-      subject: 'Test Design Preview - Strings & Strands',
-      html: customerHtml,
-    });
-    
-    res.json({ 
-      success: true, 
-      message: 'Design preview email sent successfully!',
-      info 
-    });
+    // Just return the HTML directly to the browser for instant preview!
+    res.send(customerHtml);
   } catch (err) {
     res.status(500).json({ 
-      error: 'Failed to send preview email', 
+      error: 'Failed to generate preview', 
       detail: err.message, 
       stack: err.stack,
     });
