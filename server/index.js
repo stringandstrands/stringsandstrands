@@ -910,7 +910,9 @@ async function sendTrackingUpdateEmail({ orderId, currentStatus, shiprocketOrder
 
   const nodemailer = await import('nodemailer');
   const transporter = nodemailer.default.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_APP_PASSWORD,
@@ -952,7 +954,9 @@ async function sendTrackingUpdateEmail({ orderId, currentStatus, shiprocketOrder
 async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shiprocketOrderId }) {
   const nodemailer = await import('nodemailer');
   const transporter = nodemailer.default.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_APP_PASSWORD,
@@ -1091,7 +1095,9 @@ app.get('/api/test-email', async (req, res) => {
   try {
     const nodemailer = await import('nodemailer');
     const transporter = nodemailer.default.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,
