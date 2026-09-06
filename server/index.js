@@ -953,7 +953,7 @@ async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shipro
       </tr>`)
     .join('') || '<tr><td colspan="3" style="padding:8px 12px;">No items</td></tr>';
 
-  const orderShortId = orderId.slice(0, 8).toUpperCase();
+  const orderShortId = String(orderId).slice(0, 8).toUpperCase();
   const totalInr = order?.total_amount ? (order.total_amount / 100).toLocaleString('en-IN') : '-';
   const orderDate = order?.created_at
     ? new Date(order.created_at).toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' })
