@@ -19,6 +19,7 @@ import TermsPage from './TermsPage';
 import CartDrawer from './components/CartDrawer';
 import AuthModal from './components/AuthModal';
 import AdminApp from './admin/AdminApp';
+import InstagramPopup from './InstagramPopup';
 import { AuthProvider, useAuth } from '../lib/AuthContext';
 import { CartProvider, useCart } from '../lib/CartContext';
 import { WishlistProvider, useWishlist } from '../lib/WishlistContext';
@@ -83,6 +84,7 @@ function AppContent() {
       <Footer />
       <CartDrawer />
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <InstagramPopup />
     </div>
   );
 }
