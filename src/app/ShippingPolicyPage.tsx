@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, Clock, MapPin, Package, PhoneCall, AlertCircle } from 'lucide-react';
+import { Truck, Clock, MapPin, Package, PhoneCall, Mail } from 'lucide-react';
 
 const HIGHLIGHTS = [
   { icon: <Truck size={20} />, label: 'Free Shipping', desc: 'On all orders above ₹499 across India' },
@@ -82,20 +82,10 @@ export default function ShippingPolicyPage() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-white border-b border-[#FFD1E3]">
+                <tr className="bg-white">
                   <td className="px-4 py-3 text-[#B3184F] font-medium">Standard Shipping</td>
                   <td className="px-4 py-3 text-gray-600">5–7 business days</td>
                   <td className="px-4 py-3 text-gray-600">Free above ₹499 | ₹59 below</td>
-                </tr>
-                <tr className="bg-[#FFEAF2] border-b border-[#FFD1E3]">
-                  <td className="px-4 py-3 text-[#B3184F] font-medium">Express Shipping</td>
-                  <td className="px-4 py-3 text-gray-600">2–3 business days</td>
-                  <td className="px-4 py-3 text-gray-600">₹100 (where available)</td>
-                </tr>
-                <tr className="bg-white">
-                  <td className="px-4 py-3 text-[#B3184F] font-medium">Remote Areas</td>
-                  <td className="px-4 py-3 text-gray-600">7–10 business days</td>
-                  <td className="px-4 py-3 text-gray-600">May vary</td>
                 </tr>
               </tbody>
             </table>
@@ -108,7 +98,7 @@ export default function ShippingPolicyPage() {
 
         <PolicySection title="4. Order Tracking">
           <p>
-            Once your order is shipped, you will receive an SMS and/or email containing your
+            Once your order is shipped, you will receive an email containing your
             <strong> AWB (tracking) number</strong> and the courier partner's name.
           </p>
           <p>
@@ -184,7 +174,7 @@ export default function ShippingPolicyPage() {
               href="mailto:stringsandstrands26@gmail.com"
               className="flex items-center gap-3 bg-white border border-[#FFD1E3] rounded-xl px-4 py-3 hover:border-[#FF2D74] transition-colors"
             >
-              <AlertCircle size={16} className="text-[#FF2D74]" />
+              <Mail size={16} className="text-[#FF2D74]" />
               <div>
                 <p className="text-[10px] text-[#B3184F]/50 uppercase tracking-widest">Email</p>
                 <p className="text-sm font-semibold text-[#B3184F]">stringsandstrands26@gmail.com</p>
