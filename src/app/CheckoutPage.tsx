@@ -81,6 +81,14 @@ export default function CheckoutPage() {
     e.preventDefault();
     
     setLoading(true);
+    
+    if (window.fbq) {
+      window.fbq('track', 'AddPaymentInfo', {
+        value: orderTotal,
+        currency: 'INR'
+      });
+    }
+
     try {
       // 1. Call backend create-order (ONLY initializes Razorpay)
       const apiBase = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001');

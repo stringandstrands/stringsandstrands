@@ -18,6 +18,11 @@ export default function SearchPage({ wishlist, toggleWishlist }: SearchPageProps
 
   useEffect(() => {
     if (!q.trim()) { setResults([]); return; }
+    
+    if (window.fbq) {
+      window.fbq('track', 'Search', { search_string: q });
+    }
+    
     let cancelled = false;
     setLoading(true);
     supabase.from('products').select('*')
