@@ -118,6 +118,17 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
     });
   }, [productId]);
 
+  useEffect(() => {
+    if (product && window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_ids: [product.id],
+        content_name: product.title,
+        value: product.price,
+        currency: 'INR'
+      });
+    }
+  }, [product]);
+
   // Fallback while loading
   const displayProduct: ProductData = product || {
     id: productId || '',

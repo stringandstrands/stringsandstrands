@@ -11,6 +11,7 @@ interface OrderConfirmState {
   shiprocketFailed?: boolean;
   paymentFailed?: boolean;
   error?: string;
+  orderTotal?: number;
 }
 
 function CopyButton({ value }: { value: string }) {
@@ -66,6 +67,16 @@ export default function OrderConfirmPage() {
   useEffect(() => {
     if (!state) {
       navigate('/', { replace: true });
+      return;
+    }
+
+    if (state.success && window.fbq) {
+      const safeOrderId = state.orderId ? String(state.orderId) : '';
+      window.fbq('track', 'Purchase', {
+        value: state.orderTotal || 0,
+        currency: 'INR',
+        content_ids: [safeOrderId]
+      });
     }
   }, [state, navigate]);
 

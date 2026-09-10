@@ -38,6 +38,11 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         .eq('product_id', productId);
       setWishlist(prev => { const s = new Set(prev); s.delete(productId); return s; });
     } else {
+      if (window.fbq) {
+        window.fbq('track', 'AddToWishlist', {
+          content_ids: [productId]
+        });
+      }
       await supabase.from('wishlist_items')
         .insert({ user_id: user.id, product_id: productId });
       setWishlist(prev => new Set([...prev, productId]));

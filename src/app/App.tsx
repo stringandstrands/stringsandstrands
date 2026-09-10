@@ -23,6 +23,7 @@ import InstagramPopup from './InstagramPopup';
 import { AuthProvider, useAuth } from '../lib/AuthContext';
 import { CartProvider, useCart } from '../lib/CartContext';
 import { WishlistProvider, useWishlist } from '../lib/WishlistContext';
+import PixelTracker from './components/PixelTracker';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -51,6 +52,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-white pb-14 md:pb-0 flex flex-col">
       <ScrollToTop />
+      <PixelTracker />
       <AnnouncementBar />
       <Header
         cartCount={cartCount}

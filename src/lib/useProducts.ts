@@ -16,6 +16,7 @@ export interface SupabaseProduct {
   color?: string;
   occasion?: string;
   type?: string;
+  dropdown_options?: string;
   created_at: string;
 }
 
@@ -36,6 +37,7 @@ export function toProduct(p: SupabaseProduct) {
     color: p.color,
     occasion: p.occasion,
     type: p.type,
+    dropdownOptions: p.dropdown_options,
   };
 }
 

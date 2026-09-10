@@ -273,6 +273,7 @@ export interface Product {
   badge?: string;
   img: string;
   stock?: number;
+  dropdownOptions?: string;
 }
 
 // Shuffle helper
@@ -303,6 +304,7 @@ export function useHomeProducts() {
         img: p.images?.[0] || '',
         badge: p.is_new ? 'New' : (p.is_bestseller ? 'Best' : undefined),
         stock: p.stock,
+        dropdownOptions: p.dropdown_options,
       });
       const availableData = data.filter((p: any) => p.stock > 0);
       const newArr = shuffleArray(availableData.filter((p: any) => p.is_new)).slice(0, 8).map(toProduct);
@@ -335,9 +337,18 @@ export function ProductCard({
   const [addedToBag, setAddedToBag] = useState(false);
   const wished = wishlist.has(product.id) || wishlist.has(String(product.id));
 
+  const navigate = useNavigate();
+  const hasOptions = !!product.dropdownOptions && product.dropdownOptions.trim() !== '';
+
   const handleAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (hasOptions) {
+      navigate(`/product/${product.id}`);
+      return;
+    }
+
     await addToCart({
       id: String(product.id),
       name: product.name,
@@ -392,7 +403,7 @@ export function ProductCard({
                   : "bg-[#FF2D74] hover:bg-[#D41E5C] text-[#FFEAF2]"
             }`}
           >
-            {(product as any).stock === 0 ? "Out of Stock" : addedToBag ? "Added ✓" : "Add to Bag"}
+            {(product as any).stock === 0 ? "Out of Stock" : hasOptions ? "Select Option" : addedToBag ? "Added ✓" : "Add to Bag"}
           </button>
         </div>
       </div>
@@ -408,10 +419,12 @@ export function ProductCard({
           className={`md:hidden mt-2 w-full py-1.5 text-[10px] font-bold rounded-xl tracking-widest uppercase ${
             (product as any).stock === 0
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-[#FF2D74] text-[#FFEAF2]"
+              : addedToBag
+                ? "bg-[#D41E5C] text-[#FFEAF2]"
+                : "bg-[#FF2D74]/10 text-[#FF2D74]"
           }`}
         >
-          {(product as any).stock === 0 ? "Out of Stock" : addedToBag ? "Added ✓" : "Add to Bag"}
+          {(product as any).stock === 0 ? "Out of Stock" : hasOptions ? "Select Option" : addedToBag ? "Added ✓" : "Add to Bag"}
         </button>
       </div>
     </Link>

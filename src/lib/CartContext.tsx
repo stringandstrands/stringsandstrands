@@ -114,6 +114,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addToCart = async (product: { id: string; name: string; price: number; image: string; selectedOption?: string }) => {
+    if (window.fbq) {
+      window.fbq('track', 'AddToCart', {
+        content_ids: [product.id],
+        content_name: product.name,
+        value: product.price,
+        currency: 'INR' // Assuming INR based on previous prices seen
+      });
+    }
+
     if (user) {
       // Check if already in cart
       let q = supabase.from('cart_items').select('id, quantity').eq('user_id', user.id).eq('product_id', product.id);

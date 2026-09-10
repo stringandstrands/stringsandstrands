@@ -62,6 +62,17 @@ export default function CheckoutPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (window.fbq && cartItems.length > 0) {
+      window.fbq('track', 'InitiateCheckout', {
+        content_ids: cartItems.map(item => item.productId),
+        value: cartTotal,
+        currency: 'INR',
+        num_items: cartItems.reduce((acc, item) => acc + item.quantity, 0)
+      });
+    }
+  }, [cartItems.length]); // Only run when cartItems is initially loaded
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShipping({ ...shipping, [e.target.name]: e.target.value });
   };
@@ -128,6 +139,7 @@ export default function CheckoutPage() {
                   shiprocketOrderId: verifyData.shiprocketOrderId,
                   razorpayPaymentId: verifyData.razorpayPaymentId,
                   customerName: shipping.full_name || user?.user_metadata?.name || '',
+                  orderTotal: orderTotal,
                 },
               });
             } else if (verifyData.shiprocketFailed) {

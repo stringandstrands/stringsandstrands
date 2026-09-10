@@ -78,6 +78,7 @@ export default function CategoryPage({ wishlist, toggleWishlist, type }: Categor
         occasion: p.occasion || '',
         type: p.type || '',
         created_at: p.created_at,
+        dropdownOptions: p.dropdown_options,
       }));
       mapped.sort((a, b) => {
         const aInStock = a.stock > 0 ? 1 : 0;

@@ -57,7 +57,7 @@ export default function SearchPage({ wishlist, toggleWishlist }: SearchPageProps
             {results.map(p => (
               <ProductCard
                 key={p.id}
-                product={{ id: p.id, name: p.name, price: p.discounted_price, originalPrice: p.price, img: p.images?.[0] || '', stock: p.stock }}
+                product={{ id: p.id, name: p.name, price: p.discounted_price, originalPrice: p.price, img: p.images?.[0] || '', stock: p.stock, dropdownOptions: p.dropdown_options }}
                 wishlist={wishlist}
                 onWishlistToggle={toggleWishlist}
               />
