@@ -64,11 +64,13 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (window.fbq && cartItems.length > 0) {
+      const cartTotal = cartItems.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0);
       window.fbq('track', 'InitiateCheckout', {
+        content_type: 'product',
         content_ids: cartItems.map(item => item.productId),
         value: cartTotal,
         currency: 'INR',
-        num_items: cartItems.reduce((acc, item) => acc + item.quantity, 0)
+        num_items: cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0)
       });
     }
   }, [cartItems.length]); // Only run when cartItems is initially loaded

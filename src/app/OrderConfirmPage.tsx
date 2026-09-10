@@ -70,12 +70,13 @@ export default function OrderConfirmPage() {
       return;
     }
 
-    if (state.success && window.fbq) {
-      const safeOrderId = state.orderId ? String(state.orderId) : '';
+    if (state?.success && window.fbq) {
+      const orderIdStr = state.orderId ? String(state.orderId) : '';
       window.fbq('track', 'Purchase', {
         value: state.orderTotal || 0,
         currency: 'INR',
-        content_ids: [safeOrderId]
+        content_type: 'product',
+        content_ids: [orderIdStr] // Ideally this should be an array of product IDs, but for now this works to avoid errors
       });
     }
   }, [state, navigate]);
@@ -84,7 +85,6 @@ export default function OrderConfirmPage() {
 
   const safeOrderId = state.orderId ? String(state.orderId) : '';
   const shortOrderId = safeOrderId ? safeOrderId.slice(0, 8).toUpperCase() : null;
-
   // SUCCESS
   if (state.success) {
     return (

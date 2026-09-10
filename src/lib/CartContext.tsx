@@ -116,6 +116,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addToCart = async (product: { id: string; name: string; price: number; image: string; selectedOption?: string }) => {
     if (window.fbq) {
       window.fbq('track', 'AddToCart', {
+        content_type: 'product',
         content_ids: [product.id],
         content_name: product.name,
         value: product.price,

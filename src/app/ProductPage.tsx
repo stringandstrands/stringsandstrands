@@ -121,6 +121,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
   useEffect(() => {
     if (product && window.fbq) {
       window.fbq('track', 'ViewContent', {
+        content_type: 'product',
         content_ids: [product.id],
         content_name: product.title,
         value: product.price,

@@ -124,7 +124,7 @@ export function Header({ cartCount = 0, onCartClick, onAccountClick, isLoggedIn,
     navigate(`/search?q=${encodeURIComponent(q.trim())}`);
   };
 
-  const SearchBox = ({ mobile = false }: { mobile?: boolean }) => (
+  const renderSearchBox = (mobile: boolean = false) => (
     <div className="relative">
       <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B3184F] z-10" />
       <input
@@ -194,7 +194,7 @@ export function Header({ cartCount = 0, onCartClick, onAccountClick, isLoggedIn,
         </nav>
 
         <div className="flex-1 max-w-sm mx-auto hidden md:block">
-          <SearchBox />
+          {renderSearchBox(false)}
         </div>
 
         <div className="flex items-center gap-3.5 ml-auto">
@@ -222,7 +222,7 @@ export function Header({ cartCount = 0, onCartClick, onAccountClick, isLoggedIn,
       {searchOpen && (
         <div className="md:hidden px-4 pb-3 border-t border-[#FFD1E3]">
           <div className="mt-2">
-            <SearchBox mobile />
+            {renderSearchBox(true)}
           </div>
         </div>
       )}

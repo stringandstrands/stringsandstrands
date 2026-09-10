@@ -40,6 +40,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     } else {
       if (window.fbq) {
         window.fbq('track', 'AddToWishlist', {
+          content_type: 'product',
           content_ids: [productId]
         });
       }
