@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { generateFakeReviews } from './reviewGenerator.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -143,6 +144,10 @@ app.post('/api/admin/products', requireAdmin, async (req, res) => {
       const { data, error } = await supabase.from('products').insert(inserts).select();
       if (error) throw error;
       await logAdminAction(req.adminUser.id, 'create_product', 'product', 'bulk', `Created ${req.body.variants.length} variants for: ${product.name}`);
+      
+      // Auto-generate reviews for each variant (non-blocking)
+      inserts.forEach(v => generateFakeReviews(v.id, v.rating || 5.0, supabase).catch(() => {}));
+      
       res.json({ product: data[0] }); // Return first one to satisfy frontend
     } else {
       product.id = baseId;
@@ -150,6 +155,10 @@ app.post('/api/admin/products', requireAdmin, async (req, res) => {
       const { data, error } = await supabase.from('products').insert(product).select().single();
       if (error) throw error;
       await logAdminAction(req.adminUser.id, 'create_product', 'product', data.id, `Created: ${data.name}`);
+      
+      // Auto-generate reviews (non-blocking)
+      generateFakeReviews(data.id, data.rating || 5.0, supabase).catch(() => {});
+      
       res.json({ product: data });
     }
   } catch (err) {
@@ -169,6 +178,25 @@ app.patch('/api/admin/products/:id', requireAdmin, async (req, res) => {
     res.json({ product: data });
   } catch (err) {
     console.error('[Admin] Update product error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/admin/products/:id/generate-reviews — manually trigger fake review generation
+app.post('/api/admin/products/:id/generate-reviews', requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Get product target rating
+    const { data: product, error: fetchError } = await supabase.from('products').select('rating').eq('id', id).single();
+    if (fetchError || !product) throw new Error('Product not found');
+    
+    // Await generation so we can report success
+    await generateFakeReviews(id, product.rating || 5.0, supabase);
+    await logAdminAction(req.adminUser.id, 'generate_reviews', 'product', id, `Generated reviews manually`);
+    
+    res.json({ success: true, message: 'Reviews generated successfully' });
+  } catch (err) {
+    console.error('[Admin] Manual generate reviews error:', err);
     res.status(500).json({ error: err.message });
   }
 });

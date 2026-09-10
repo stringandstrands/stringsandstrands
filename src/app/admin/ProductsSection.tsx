@@ -101,6 +101,22 @@ export default function ProductsSection() {
     }
   }
 
+  async function generateReviews(product: any) {
+    try {
+      showToast('Generating reviews...', 'success');
+      const token = await getAdminToken();
+      const resp = await fetch(`${API}/api/admin/products/${product.id}/generate-reviews`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error);
+      showToast(data.message || `Reviews generated for ${product.name}`, 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to generate reviews', 'error');
+    }
+  }
+
   const sortArrow = (field: SortField) => sortBy === field ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
   const totalPages = Math.ceil(total / limit);
 
@@ -177,6 +193,7 @@ export default function ProductsSection() {
                       <td>
                         <div style={{ display: 'flex', gap: 6 }}>
                           <button className="admin-btn admin-btn-ghost" onClick={() => setEditProduct(p)} title="Edit">✎</button>
+                          <button className="admin-btn admin-btn-ghost" onClick={() => generateReviews(p)} title="Generate Reviews">💬</button>
                           <button className="admin-btn admin-btn-ghost" onClick={() => toggleStock(p)} title={p.stock > 0 ? 'Mark out of stock' : 'Back in stock'}>
                             {p.stock > 0 ? '⊘' : '✓'}
                           </button>
