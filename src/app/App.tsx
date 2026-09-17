@@ -40,6 +40,12 @@ function AppContent() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Pre-warm the backend server on Render to avoid cold start timeouts during checkout
+  React.useEffect(() => {
+    const apiBase = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001');
+    fetch(`${apiBase}/api/user/order-count?email=pre-warm-ping`).catch(() => {});
+  }, []);
+
   // Wrapper for wishlist toggle that requires auth
   const handleWishlistToggle = async (productId: string) => {
     if (!user) {
