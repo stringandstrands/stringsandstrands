@@ -993,8 +993,8 @@ async function sendOrderConfirmationEmail({ orderId, userEmail, userName, shipro
   const orderShortId = String(orderId).slice(0, 8).toUpperCase();
   const totalInr = order?.total_amount ? (order.total_amount / 100).toLocaleString('en-IN') : '-';
   const orderDate = order?.created_at
-    ? new Date(order.created_at).toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' })
-    : new Date().toLocaleString('en-IN');
+    ? new Date(order.created_at).toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Asia/Kolkata' })
+    : new Date().toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Asia/Kolkata' });
 
   const customerHtml = `
     <div style="font-family:'Georgia',serif;max-width:600px;margin:auto;background:#fff;border:1px solid #FFD1E3;border-radius:16px;overflow:hidden;">
