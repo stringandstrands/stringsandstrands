@@ -555,7 +555,7 @@ export default function ProductPage({
 
       </div>
 
-      <Footer />
+
 
       {/* Login Prompt Modal */}
       {showLoginPrompt && (
