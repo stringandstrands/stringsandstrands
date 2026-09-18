@@ -42,9 +42,9 @@ export default function ProductPage({
   isWishlisted,
   onRequireAuth,
 }: {
-  wishlist: Set<number>;
-  toggleWishlist: (id: string) => Promise<void>;
-  isWishlisted: (id: string) => boolean;
+  wishlist: Set<string | number>;
+  toggleWishlist: (id: string | number) => void;
+  isWishlisted?: (id: string) => boolean;
   onRequireAuth?: () => void;
 }) {
   const { productId } = useParams();
@@ -64,7 +64,7 @@ export default function ProductPage({
   const [submittingReview, setSubmittingReview] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  const wished = productId ? (wishlist.has(Number(productId)) || wishlist.has(productId as any) || (isWishlisted ? isWishlisted(productId) : false)) : false;
+  const wished = productId ? (wishlist.has(productId) || (isWishlisted ? isWishlisted(productId) : false)) : false;
 
   useEffect(() => {
     if (!productId) return;
