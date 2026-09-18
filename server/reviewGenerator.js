@@ -145,16 +145,13 @@ function generateReviewsForRating(targetRating, numReviews) {
 export async function generateFakeReviews(productId, targetRating = 5.0, supabase) {
   try {
     // 1. Fetch a valid user_id for the foreign key
-    const { data: profiles } = await supabase
-      .from('user_profiles')
-      .select('id')
-      .limit(1);
+    const { data: { users }, error: authError } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
       
-    if (!profiles || profiles.length === 0) {
-      console.log('No user profile found, skipping review generation.');
+    if (authError || !users || users.length === 0) {
+      console.log('No users found in auth database, skipping review generation.');
       return;
     }
-    const userId = profiles[0].id;
+    const userId = users[0].id;
 
     const numReviews = Math.random() > 0.5 ? 3 : 2; // 2 or 3 reviews
     const ratings = generateReviewsForRating(targetRating, numReviews);
