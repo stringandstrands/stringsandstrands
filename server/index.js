@@ -11,7 +11,14 @@ import { createClient } from '@supabase/supabase-js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { v2 as cloudinary } from 'cloudinary';
 import { generateFakeReviews } from './reviewGenerator.js';
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -223,23 +230,20 @@ app.delete('/api/admin/products/:id', requireAdmin, async (req, res) => {
   }
 });
 
-// POST /api/admin/products/upload-image — upload to Supabase Storage
+// POST /api/admin/products/upload-image — upload to Cloudinary
 app.post('/api/admin/products/upload-image', requireAdmin, async (req, res) => {
   try {
     const { base64, fileName, mimeType } = req.body;
     if (!base64 || !fileName) return res.status(400).json({ error: 'Missing file data' });
 
-    const buffer = Buffer.from(base64, 'base64');
-    const path = `${Date.now()}-${fileName}`;
+    const base64Str = `data:${mimeType || 'image/jpeg'};base64,${base64}`;
+    
+    const result = await cloudinary.uploader.upload(base64Str, {
+      folder: 'product-images',
+      public_id: `${Date.now()}-${fileName.replace(/\.[^/.]+$/, '')}`
+    });
 
-    const { error: uploadError } = await supabase.storage
-      .from('product-images')
-      .upload(path, buffer, { contentType: mimeType || 'image/jpeg', upsert: false });
-
-    if (uploadError) throw uploadError;
-
-    const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
-    res.json({ url: publicUrl });
+    res.json({ url: result.secure_url });
   } catch (err) {
     console.error('[Admin] Image upload error:', err);
     res.status(500).json({ error: err.message });
