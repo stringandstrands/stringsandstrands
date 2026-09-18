@@ -665,7 +665,7 @@ function ShopByOccasion() {
       </div>
       <div
         ref={scrollRef}
-        className="max-w-7xl mx-auto px-4 lg:px-8 overflow-visible md:overflow-x-auto scrollbar-hide md:snap-x md:snap-mandatory cursor-default md:cursor-grab md:active:cursor-grabbing select-none pb-8"
+        className="max-w-7xl mx-auto px-4 lg:px-8 overflow-visible md:overflow-x-auto scrollbar-hide cursor-default md:cursor-grab md:active:cursor-grabbing select-none pb-8"
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
@@ -675,7 +675,7 @@ function ShopByOccasion() {
           {OCCASION_TILES.map((tile) => (
             <div
               key={tile.id}
-              className="w-full md:w-[42vw] lg:w-[calc((100vw-4rem)/3.15)] xl:w-[386px] md:flex-shrink-0 md:snap-start"
+              className="w-full md:w-[42vw] lg:w-[calc((100vw-4rem)/3.15)] xl:w-[386px] md:flex-shrink-0"
             >
               <Link
                 to={`/occasion/${tile.id}`}
