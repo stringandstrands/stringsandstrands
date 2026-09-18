@@ -94,7 +94,7 @@ function AppContent() {
           <Route path="/bestsellers" element={<CategoryPage wishlist={wishlist} toggleWishlist={handleWishlistToggle} isWishlisted={isWishlisted} type="bestsellers" />} />
           <Route path="/new-arrivals" element={<CategoryPage wishlist={wishlist} toggleWishlist={handleWishlistToggle} isWishlisted={isWishlisted} type="new-arrivals" />} />
           <Route path="/occasion/:occasionId" element={<CategoryPage wishlist={wishlist} toggleWishlist={handleWishlistToggle} isWishlisted={isWishlisted} type="occasion" />} />
-          <Route path="/product/:productId" element={<ProductPage wishlist={wishlist} toggleWishlist={handleWishlistToggle} isWishlisted={isWishlisted} />} />
+          <Route path="/product/:productId" element={<ProductPage wishlist={wishlist} toggleWishlist={handleWishlistToggle} isWishlisted={isWishlisted} onRequireAuth={() => setAuthModalOpen(true)} />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/search" element={<SearchPage wishlist={wishlist} toggleWishlist={handleWishlistToggle} isWishlisted={isWishlisted} />} />
           <Route path="/checkout" element={<CheckoutPage />} />

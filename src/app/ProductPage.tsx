@@ -36,7 +36,17 @@ const TRUST_BADGES = [
   { icon: <ShieldCheck size={18} />, label: 'Certified Quality', sub: 'Anti-tarnish guaranteed' },
 ];
 
-export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: { wishlist: Set<string | number>, toggleWishlist: (id: string | number) => void, isWishlisted?: (id: string) => boolean }) {
+export default function ProductPage({
+  wishlist,
+  toggleWishlist,
+  isWishlisted,
+  onRequireAuth,
+}: {
+  wishlist: Set<number>;
+  toggleWishlist: (id: string) => Promise<void>;
+  isWishlisted: (id: string) => boolean;
+  onRequireAuth?: () => void;
+}) {
   const { productId } = useParams();
   const { addToCart } = useCart();
   const { user } = useAuth();
@@ -52,8 +62,9 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: 5, title: '', text: '' });
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  const wished = productId ? (wishlist.has(productId) || (isWishlisted ? isWishlisted(productId) : false)) : false;
+  const wished = productId ? (wishlist.has(Number(productId)) || wishlist.has(productId as any) || (isWishlisted ? isWishlisted(productId) : false)) : false;
 
   useEffect(() => {
     if (!productId) return;
@@ -159,7 +170,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
 
   const submitReview = async () => {
     if (!user) {
-      toast.error("Please log in to submit a review.");
+      setShowLoginPrompt(true);
       return;
     }
     if (!reviewForm.title || !reviewForm.text) {
@@ -443,7 +454,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
             </h2>
             <button 
               onClick={() => {
-                if (!user) toast.error("Please log in to write a review!");
+                if (!user) setShowLoginPrompt(true);
                 else setReviewFormOpen(!reviewFormOpen);
               }}
               className="text-sm text-[#FF2D74] font-semibold hover:underline"
@@ -543,6 +554,39 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
         </div>
 
       </div>
+
+      <Footer />
+
+      {/* Login Prompt Modal */}
+      {showLoginPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-xl border border-[#FFD1E3] animate-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-[#B3184F] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Please log in to write a review!
+            </h3>
+            <p className="text-gray-500 text-sm mb-6">
+              We'd love to hear your thoughts. Log in to share your experience with this product.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setShowLoginPrompt(false);
+                  onRequireAuth?.();
+                }}
+                className="w-full bg-[#FF2D74] hover:bg-[#D41E5C] text-white py-3 rounded-xl font-semibold transition-colors"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setShowLoginPrompt(false)}
+                className="text-xs font-semibold text-gray-500 hover:text-gray-800 transition-colors py-2"
+              >
+                Back to browsing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
