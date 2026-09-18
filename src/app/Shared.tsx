@@ -403,7 +403,7 @@ export function ProductCard({
                   : "bg-[#FF2D74] hover:bg-[#D41E5C] text-[#FFEAF2]"
             }`}
           >
-            {(product as any).stock === 0 ? "Out of Stock" : hasOptions ? "Select Option" : addedToBag ? "Added ✓" : "Add to Bag"}
+            {(product as any).stock === 0 ? "Out of Stock" : hasOptions ? "Select Option" : addedToBag ? "Added ✓" : "Add to Cart"}
           </button>
         </div>
       </div>
@@ -421,10 +421,10 @@ export function ProductCard({
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : addedToBag
                 ? "bg-[#D41E5C] text-[#FFEAF2]"
-                : "bg-[#FF2D74]/10 text-[#FF2D74]"
+                : "bg-[#FF2D74] text-white"
           }`}
         >
-          {(product as any).stock === 0 ? "Out of Stock" : hasOptions ? "Select Option" : addedToBag ? "Added ✓" : "Add to Bag"}
+          {(product as any).stock === 0 ? "Out of Stock" : hasOptions ? "Select Option" : addedToBag ? "Added ✓" : "Add to Cart"}
         </button>
       </div>
     </Link>
