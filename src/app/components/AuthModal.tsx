@@ -26,7 +26,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
     
     setLoading(true);
     setError(null);
@@ -142,20 +145,20 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="relative">
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD1E3]" />
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
                 </div>
                 
                 {mode !== 'forgot_password' && (
                   <div className="relative">
                     <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD1E3]" />
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
+                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
                   </div>
                 )}
 
                 {mode === 'signup' && (
                   <div className="relative">
                     <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD1E3]" />
-                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone Number" required className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
+                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone Number" className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
                   </div>
                 )}
                 
