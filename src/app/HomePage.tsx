@@ -470,7 +470,7 @@ const CATEGORIES = [
   { label: "Bracelets", img: "/categories/cat_bracelets.png" },
   { label: "Bangles", img: "/categories/cat_bangles.png" },
   { label: "Sets", img: "/categories/cat_sets.png" },
-  { label: "Hair Accessories", img: "/categories/cat_pendants.png" },
+  { label: "Hair Accessories", img: "/categories/cat_hair_accessories.jpg" },
 ];
 
 function CategoryCircle({ label, img }: { label: string; img: string }) {
@@ -665,21 +665,21 @@ function ShopByOccasion() {
       </div>
       <div
         ref={scrollRef}
-        className="max-w-7xl mx-auto px-4 lg:px-8 overflow-x-auto scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none pb-8"
+        className="max-w-7xl mx-auto px-4 lg:px-8 overflow-visible md:overflow-x-auto scrollbar-hide md:snap-x md:snap-mandatory cursor-default md:cursor-grab md:active:cursor-grabbing select-none pb-8"
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
       >
-        <div className="flex gap-5 md:gap-6 w-max">
+        <div className="grid grid-cols-2 gap-3 md:flex md:gap-6 md:w-max w-full">
           {OCCASION_TILES.map((tile) => (
             <div
               key={tile.id}
-              className="w-[82vw] md:w-[42vw] lg:w-[calc((100vw-4rem)/3.15)] xl:w-[386px] flex-shrink-0 snap-start"
+              className="w-full md:w-[42vw] lg:w-[calc((100vw-4rem)/3.15)] xl:w-[386px] md:flex-shrink-0 md:snap-start"
             >
               <Link
                 to={`/occasion/${tile.id}`}
-                className="group block relative w-full aspect-[4/3] rounded-[24px] overflow-hidden bg-[#FFD1E3] shadow-sm hover:shadow-xl transition-all duration-300"
+                className="group block relative w-full aspect-square md:aspect-[4/3] rounded-2xl md:rounded-[24px] overflow-hidden bg-[#FFD1E3] shadow-sm hover:shadow-xl transition-all duration-300"
                 draggable={false}
               >
                 <img
@@ -688,16 +688,16 @@ function ShopByOccasion() {
                   draggable={false}
                   className="absolute inset-0 w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                 />
-                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
 
-                <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center justify-between">
+                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-6 flex items-center justify-between">
                   <h3
-                    className="text-white text-xl md:text-2xl font-bold tracking-wide"
+                    className="text-white text-base sm:text-lg md:text-2xl font-bold tracking-wide"
                     style={{ fontFamily: "'Playfair Display', serif" }}
                   >
                     {tile.label}
                   </h3>
-                  <ArrowRight className="text-white transform transition-transform duration-300 group-hover:translate-x-1.5" size={22} />
+                  <ArrowRight className="text-white transform transition-transform duration-300 group-hover:translate-x-1.5 hidden sm:block" size={22} />
                 </div>
               </Link>
             </div>
