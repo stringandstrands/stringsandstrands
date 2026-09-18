@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { ShoppingBag, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useCart } from '../lib/CartContext';
 import { useAuth } from '../lib/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -198,11 +199,11 @@ export default function CheckoutPage() {
 
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', function (response: any) {
-        alert(`Payment failed: ${response.error.description}`);
+        toast.error(`Payment failed: ${response.error.description}`);
       });
       rzp.open();
     } catch (err: any) {
-      alert(err.message || 'Checkout failed');
+      toast.error(err.message || 'Checkout failed');
     } finally {
       setLoading(false);
     }

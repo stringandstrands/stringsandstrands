@@ -24,6 +24,7 @@ import { AuthProvider, useAuth } from '../lib/AuthContext';
 import { CartProvider, useCart } from '../lib/CartContext';
 import { WishlistProvider, useWishlist } from '../lib/WishlistContext';
 import PixelTracker from './components/PixelTracker';
+import { Toaster } from 'react-hot-toast';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -57,6 +58,25 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-white pb-14 md:pb-0 flex flex-col">
+      <Toaster 
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: '#fff5f8',
+            color: '#B3184F',
+            border: '1px solid #FFD1E3',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '14px',
+            boxShadow: '0 4px 14px rgba(179,24,79,0.15)',
+          },
+          success: {
+            iconTheme: {
+              primary: '#FF2D74',
+              secondary: '#fff5f8',
+            },
+          },
+        }}
+      />
       <ScrollToTop />
       <PixelTracker />
       <AnnouncementBar />

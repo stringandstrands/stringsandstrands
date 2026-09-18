@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Package, MapPin, Loader2, Save, Trash2, Plus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../lib/AuthContext';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router';
@@ -89,10 +90,10 @@ export default function ProfilePage() {
         .from('user_profiles')
         .upsert({ id: user.id, name: profile.name, phone: profile.phone, email: profile.email });
       if (error) throw error;
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to update profile.");
+      toast.error("Failed to update profile.");
     } finally {
       setSavingProfile(false);
     }
@@ -114,7 +115,7 @@ export default function ProfilePage() {
       setNewAddress({ full_name: '', phone: '', address_line1: '', address_line2: '', city: '', state: '', pincode: '', is_default: false });
     } catch (err) {
       console.error(err);
-      alert("Failed to save address.");
+      toast.error("Failed to save address.");
     }
   };
 
@@ -125,7 +126,7 @@ export default function ProfilePage() {
       setAddresses(addresses.filter(a => a.id !== id));
     } catch (err: any) {
       console.error(err);
-      alert(err?.message?.includes('foreign key') ? "Cannot delete this address as it is associated with a past order." : "Failed to delete address.");
+      toast.error(err?.message?.includes('foreign key') ? "Cannot delete this address as it is associated with a past order." : "Failed to delete address.");
     }
   };
 

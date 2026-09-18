@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import { Star, StarHalf, Minus, Plus, ChevronDown, CheckCircle, ThumbsUp, ThumbsDown, Heart, Truck, RotateCcw, ShieldCheck } from 'lucide-react';
 import { MAGENTA, CHARCOAL } from './Shared';
+import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../lib/CartContext';
 import { useAuth } from '../lib/AuthContext';
@@ -158,11 +159,11 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
 
   const submitReview = async () => {
     if (!user) {
-      alert("Please log in to submit a review.");
+      toast.error("Please log in to submit a review.");
       return;
     }
     if (!reviewForm.title || !reviewForm.text) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.");
       return;
     }
     setSubmittingReview(true);
@@ -193,9 +194,10 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
       
       setReviewForm({ rating: 5, title: '', text: '' });
       setReviewFormOpen(false);
+      toast.success("Review submitted successfully!");
     } catch (e) {
       console.error(e);
-      alert("Failed to submit review.");
+      toast.error("Failed to submit review.");
     } finally {
       setSubmittingReview(false);
     }
@@ -441,7 +443,7 @@ export default function ProductPage({ wishlist, toggleWishlist, isWishlisted }: 
             </h2>
             <button 
               onClick={() => {
-                if (!user) alert("Please log in to write a review!");
+                if (!user) toast.error("Please log in to write a review!");
                 else setReviewFormOpen(!reviewFormOpen);
               }}
               className="text-sm text-[#FF2D74] font-semibold hover:underline"
