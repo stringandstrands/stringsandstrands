@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Mail, Sparkles, CheckCircle, Lock } from 'lucide-react';
+import { X, Mail, Sparkles, CheckCircle, Lock, Phone } from 'lucide-react';
 import { useAuth } from '../../lib/AuthContext';
 import { useNavigate } from 'react-router';
 
@@ -16,6 +16,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -47,7 +48,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           setLoading(false);
           return;
         }
-        const { error } = await signUp(email.trim(), password);
+        if (!phone.trim()) {
+          setError("Phone number is required");
+          setLoading(false);
+          return;
+        }
+        const { error } = await signUp(email.trim(), password, phone.trim());
         if (error) throw new Error(error);
         handleClose();
         navigate('/profile');
@@ -82,6 +88,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setSent(false);
     setEmail('');
     setPassword('');
+    setPhone('');
     setError(null);
     setMode('login');
     onClose();
@@ -142,6 +149,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <div className="relative">
                     <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD1E3]" />
                     <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
+                  </div>
+                )}
+
+                {mode === 'signup' && (
+                  <div className="relative">
+                    <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD1E3]" />
+                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone Number" required className="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#FFD1E3] rounded-2xl text-[#B3184F] placeholder-[#FFD1E3] focus:outline-none focus:border-[#FF2D74] transition-colors text-sm" />
                   </div>
                 )}
                 
