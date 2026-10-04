@@ -194,7 +194,10 @@ const routes = [
 export default async function handler(req, res) {
   try {
     const url = new URL(req.url, 'http://localhost');
-    const pathname = decodeURIComponent(url.pathname);
+    let pathname = decodeURIComponent(url.pathname);
+    if (!pathname.startsWith('/api')) {
+      pathname = '/api' + (pathname.startsWith('/') ? '' : '/') + pathname;
+    }
     const query = Object.fromEntries(url.searchParams);
     delete query.path; // injected by Vercel for catch-all routes
 
