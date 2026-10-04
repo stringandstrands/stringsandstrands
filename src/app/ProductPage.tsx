@@ -179,15 +179,26 @@ export default function ProductPage({
     }
     setSubmittingReview(true);
     try {
-      const { error } = await supabase.from('reviews').insert({
+      const { data: inserted, error } = await supabase.from('reviews').insert({
         product_id: productId,
         user_id: user.id,
         reviewer_name: user.user_metadata?.name || user.email?.split('@')[0] || 'Customer',
         rating: reviewForm.rating,
         title: reviewForm.title,
         review_text: reviewForm.text,
-      });
+      }).select('id').single();
       if (error) throw error;
+
+      // Owner alert email (best-effort; never blocks the review)
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session || !inserted?.id) return;
+        const apiBase = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001');
+        fetch(`${apiBase}/api/reviews/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ reviewId: inserted.id }),
+        }).catch(() => {});
+      });
       
       const { data: reviewsData } = await supabase.from('reviews').select('*').eq('product_id', productId).order('created_at', { ascending: false });
       if (reviewsData) {

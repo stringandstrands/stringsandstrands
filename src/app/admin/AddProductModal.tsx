@@ -183,20 +183,30 @@ export default function AddProductModal({ onClose, onSaved, editProduct }: Props
     const token = await getAdminToken();
     const urls: string[] = [];
     for (const file of files) {
-      const base64 = await new Promise<string>((res, rej) => {
-        const r = new FileReader();
-        r.onload = e => res((e.target!.result as string).split(',')[1]);
-        r.onerror = rej;
-        r.readAsDataURL(file);
-      });
-      const resp = await fetch(`${API}/api/admin/products/upload-image`, {
+      // 1. Ask our API for a signed upload ticket (API secret stays on the server)
+      const signResp = await fetch(`${API}/api/admin/products/upload-signature`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ base64, fileName: file.name, mimeType: file.type }),
+        body: JSON.stringify({ fileName: file.name }),
       });
-      const data = await resp.json();
-      if (data.url) urls.push(data.url);
-      else throw new Error(data.error || 'Upload failed');
+      const sign = await signResp.json();
+      if (!signResp.ok) throw new Error(sign.error || 'Upload failed');
+
+      // 2. Upload straight to Cloudinary (bypasses Vercel's ~4.5MB request limit)
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('api_key', sign.apiKey);
+      fd.append('timestamp', String(sign.timestamp));
+      fd.append('signature', sign.signature);
+      fd.append('folder', sign.folder);
+      fd.append('public_id', sign.publicId);
+      const upResp = await fetch(`https://api.cloudinary.com/v1_1/${sign.cloudName}/image/upload`, {
+        method: 'POST',
+        body: fd,
+      });
+      const data = await upResp.json();
+      if (data.secure_url) urls.push(data.secure_url);
+      else throw new Error(data.error?.message || 'Upload failed');
     }
     return urls;
   }
