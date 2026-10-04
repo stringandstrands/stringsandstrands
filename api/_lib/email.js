@@ -1,21 +1,26 @@
-// Transactional emails via Resend. Templates preserved from the Express backend.
-import { Resend } from 'resend';
+// Transactional emails via Nodemailer (Gmail). Templates preserved from the Express backend.
+import nodemailer from 'nodemailer';
 import { getSupabase } from './core.js';
 
 const FROM = 'Strings & Strands <orders@stringsandstrands.in>';
 const ownerEmail = () => process.env.OWNER_EMAIL || 'stringandstrands26@gmail.com';
 
-function resend() {
-  return new Resend(process.env.RESEND_API_KEY);
+function createTransporter() {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
 }
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-// Resend v3 returns { data, error } instead of throwing on API errors.
 async function sendMail(payload) {
-  const { error } = await resend().emails.send(payload);
-  if (error) throw new Error(error.message || JSON.stringify(error));
+  const transporter = createTransporter();
+  await transporter.sendMail(payload);
 }
 
 // ── Shipping / tracking update (customer) ────────────────────────────────────
